@@ -41,8 +41,7 @@ def selectWeather(matrix,experimentNumber):
     return matrix[experimentNumber]
 
 """
-Experiment setup function:
-
+Experiment setup function: 
 """
 def experimentSetUp(client,currentConditions,newExperiment,file):
     # input("Check The Loaded File Now")
@@ -297,8 +296,6 @@ def say(msg = "Finish", voice = "Victoria"):
 #     # song = AudioSegment.from_wav("Python3/src/experiments/terrain-terrain,-pull-up!-pull-up!-made-with-Voicemod.wav")
 #     # play(song)
 #     # playsound('Python3/src/experiments/terrain-terrain,-pull-up!-pull-up!-made-with-Voicemod.wav')
-
-    
 
 def setUp():
     file = open("/Users/flyingtopher/X-Plane 11/Data.txt", 'w')
