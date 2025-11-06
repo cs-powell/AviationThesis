@@ -8,8 +8,11 @@ from cognitiveModel import AircraftLandingModel
 import shutil
 import csv
 from enum import Enum
-from playsound import playsound
+# from playsound import playsound
 import threading as threading
+from pathlib import Path
+import tkinter as tk
+from tkinter import filedialog
 
 class messageType(Enum):
     REGULAR = 1
@@ -29,11 +32,13 @@ def eulerToQuat(psiInput,thetaInput,phiInput):
     return quat
 
 def loadFile():
-    filename = "Python3/src/experiments/weather_files/weather.csv"
-    filename = "Python3/src/experiments/weather_files/turbulence.csv"
+    dir = Path(__file__).parent
+    # print(f"Script Directory: {dir}")
+    filename = str(dir) + "/experiments/weather_files/weather.csv"
+    filename = str(dir) + "/experiments/weather_files/turbulence.csv"
     with open(filename,"r") as f:
         matrix = list(csv.reader(f,delimiter=','))
-        print(matrix)
+        # print(matrix)
         return matrix
     
 
@@ -41,7 +46,7 @@ def selectWeather(matrix,experimentNumber):
     return matrix[experimentNumber]
 
 """
-Experiment setup function: 
+Experiment setup function:
 """
 def experimentSetUp(client,currentConditions,newExperiment,file):
     # input("Check The Loaded File Now")
@@ -172,6 +177,8 @@ def experimentSetUp(client,currentConditions,newExperiment,file):
         specialPrint(message,False,messageType.REGULAR)
     else:
         print("Experiment currently in progress, not resetting position and environmental conditions")
+    currentDelay = float(currentConditions[9]);
+    return currentDelay;
 
 def printLoop(status,data):
     while(status):
@@ -179,7 +186,7 @@ def printLoop(status,data):
     if(not status):
         print("Thread Should Finish Now")
 
-def log(cogModel, file,timeElapsed):
+def log(cogModel, file,timeElapsed): # Get and format data for logging in output file
     airspeedDREF = "sim/cockpit2/gauges/indicators/airspeed_kts_pilot"
     rollDREF = "sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot"
     magneticHeadingDREF = "sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot"
@@ -205,8 +212,7 @@ def log(cogModel, file,timeElapsed):
     finalString = "".join(mainString)
     file.write(finalString)
     file.flush()
-    # file.write(str(timeElapsed) + "," + str(data[0][0]) + "," + str(data[1][0]) + "," + str(data[2][0]) + "," + str(data[3][0]) +"\n")    
-
+    # file.write(str(timeElapsed) + "," + str(data[0][0]) + "," + str(data[1][0]) + "," + str(data[2][0]) + "," + str(data[3][0]) +"\n")
 
 def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experimentCount,file):
     specialPrint("New Experiment\nSetting Up the Simulation",False,messageType.REGULAR)
@@ -231,9 +237,8 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
                 """
                 Set Simulator Conditions
                 """
-                experimentSetUp(cogModel.client,currentConditions,newExperiment,file)
+                currentDelay = experimentSetUp(cogModel.client,currentConditions,newExperiment,file)
                 
-                currentDelay = float(currentConditions[9])
                 """
                 """
                 cogModel.client.pauseSim(False)
@@ -243,14 +248,14 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
                 Single Experiment Loop
                 """
                 startTime = time.time()
-                endTime = time.time()
-                elapsed = endTime - startTime
+                endTime =   time.time()
+                elapsed =   endTime - startTime
                 while(experimentInProgress):
                     elapsed = endTime - startTime
                     if(elapsed > currentDelay):
                         cogModel.update_aircraft_state() 
                         cogModel.update_controls_simultaneously()
-                        client.pauseSim(False)          #Unpause Simulator
+                        # client.pauseSim(False)          #Unpause Simulator
                         startTime = time.time()
                     # sleep(2)                     # Let Simulator Run 50 Milliseconds
                     log(cogModel,file,elapsed)
@@ -264,8 +269,10 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
             specialPrint(message,False,messageType.ERROR)
             continue
 
+
+
     """
-    Parse End Condition: Succesful Run or Timeout-Induced End
+    Parse End Condition outside of experiment loop: Succesful Run or Timeout-Induced End
     """
     if(timeElapsed >= timeoutLimit):
         print("Timeout[" + str(timeElapsed) +"]:"+"Error, please run test again")
@@ -274,7 +281,7 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
 
 
     """
-    Ask Experimenter if they would like to exit experiment battery early 
+    Ask Experimenter if they would like to exit experiment battery early and not continue to the next experiment in the sequence 
     """
     # exitDecision = input("Press 'y' or any key to continue, press 'n' to exit...")
     exitDecision = "yes"
@@ -286,8 +293,8 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
     return exitExperimentLoop
 
 
-def say(msg = "Finish", voice = "Victoria"):
-        os.system(f'say -v {voice} {"Hello"}')
+# def say(msg = "Finish", voice = "Victoria"):
+#         os.system(f'say -v {voice} {"Hello"}')
 
 # def playSound():
 #     # wave_obj = sa.WaveObject.from_wave_file("Python3/src/experiments/terrain-terrain,-pull-up!-pull-up!-made-with-Voicemod.wav")
@@ -297,19 +304,23 @@ def say(msg = "Finish", voice = "Victoria"):
 #     # play(song)
 #     # playsound('Python3/src/experiments/terrain-terrain,-pull-up!-pull-up!-made-with-Voicemod.wav')
 
-def setUp():
-    file = open("/Users/flyingtopher/X-Plane 11/Data.txt", 'w')
+def setUp(xplaneFolderPath):
+    file = open(xplaneFolderPath + "Data.txt", 'w')
     file.close()
     specialPrint("Data Collection File Ready",False,messageType.REGULAR)
 
 def cleanUp(count,title):
     now = datetime.datetime
-    # shutil.copy("/Users/flyingtopher/X-Plane 11/Data.txt", "/Users/flyingtopher/Desktop/Test Destination/" + title + "_"+ count + "_" + str(now.now()) + "_" + ".txt")
-    shutil.copy("/Users/flyingtopher/X-Plane 11/Data.txt", "/Users/flyingtopher/Desktop/Test Destination/Current Experiment/" + str(count)+ "_" + title + ".txt")
-    print("CLEAN UP: Data File Deleted and Reset")
+    dir = Path(__file__).parent.parent.parent
+    shutil.copy("/Users/flyingtopher/X-Plane 11/Data.txt", str(dir) + "/Project_Data/Current Experiment/" + str(count)+ "_" + title + ".txt")
     specialPrint("Data File Ready",False,messageType.REGULAR)
 
-def specialPrint(text, inputRequested,type): 
+    # shutil.copy("/Users/flyingtopher/X-Plane 11/Data.txt", "/Users/flyingtopher/Desktop/Test Destination/" + title + "_"+ count + "_" + str(now.now()) + "_" + ".txt")
+    # dirname = os.path.dirname(__file__)
+    # print("CLEAN UP: Data File Deleted and Reset")
+    # specialPrint("Data File Ready",False,messageType.REGULAR)
+
+def specialPrint(text, inputRequested,type):
     if(type == messageType.REGULAR): 
         print("-" * 81)
         print('====> ', end='')
@@ -330,25 +341,34 @@ def ex():
     """
     One Time experimental setup
     """
+    dir = Path(__file__).parent.parent.parent.parent
     prefix = specialPrint("Please Enter Experiment Set Title, leave blank for trial runs", True, messageType.REGULAR) 
     experimentConditionMatrix = loadFile()
     startAt = input("Start At Experiment # 1 to " + str(len(experimentConditionMatrix)-1))
-
     title = str(prefix + "--" + experimentConditionMatrix[0][0])
     specialPrint("Title is: " + title, False, messageType.REGULAR)
     allowPrinting = False
     isNewExperiment = True
     experimentCount = int(startAt)
     header = "Cycle Time,Latitude, Longitude, Altitude, Pitch, Roll\n"
-    file2 = open("/Users/flyingtopher/Desktop/Test Destination/Current Experiment/CurrentExperimentList.txt", 'w')
+
+    # dir = Path(__file__).parent.parent.parent
+    # dimkdir(exist_ok=True, parents=True)
+    Path(str(dir) + "/Project_Data/Current Experiment").mkdir(exist_ok=True, parents=True)
+    file2 = open(str(dir) + "/Project_Data/Current Experiment/CurrentExperimentList.txt", 'a+')
     file2.write(str(title) + "\n")
     startTime = time.time()
+    xplaneFolderPath = filedialog.askdirectory(
+        title="Select The X-Plane 11 Folder",
+        initialdir="/",  # Optional: set initial directory
+        # filetypes=(("Text files", "*.txt"), ("All files", "*.*")) # Optional: filter file types
+        )
     """
     Experiment Loop
     """
     while(experimentCount<len(experimentConditionMatrix)):
-        setUp()
-        file = open("/Users/flyingtopher/X-Plane 11/Data.txt", 'a')
+        setUp(xplaneFolderPath)
+        file = open(str(xplaneFolderPath) + "Data.txt", 'a')
         file.write(str(header)) #Write Header to File$
         currentConditions = experimentConditionMatrix[experimentCount]
         file2.write(str(experimentCount) +" // " + str(currentConditions))
@@ -367,7 +387,7 @@ def ex():
     """
     now = datetime.datetime
     ##Adding something to copy all the battery files into a safe folder so they don't get overwritten
-    shutil.copytree("/Users/flyingtopher/Desktop/Test Destination/Current Experiment", ("/Users/flyingtopher/Desktop/Test Destination/Data Storage/" + title + " " + str(now.now())), dirs_exist_ok=True)
+    shutil.copytree((str(dir) + "/Project_Data/Current Experiment"), (str(dir) + "/Project_Data/Data_Storage/" + title + " " + str(now.now())), dirs_exist_ok=True)
     specialPrint("Experiment Battery Complete", False,messageType.REGULAR)
 
 if __name__ == "__main__":
