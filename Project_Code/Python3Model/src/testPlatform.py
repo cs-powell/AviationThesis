@@ -13,7 +13,7 @@ import threading as threading
 from threading import Thread
 from pathlib import Path
 import tkinter as tk
-from tkinter import filedialog 
+from tkinter import filedialog
 
 class messageType(Enum):
     REGULAR = 1
@@ -186,6 +186,10 @@ def printLoop(status,data):
         print(str(data))
     if(not status):
         print("Thread Should Finish Now")
+
+
+
+    
 
 def log(cogModel, file,timeElapsed): # Get and format data for logging in output file
     airspeedDREF = "sim/cockpit2/gauges/indicators/airspeed_kts_pilot"
@@ -360,7 +364,7 @@ def specialPrint(text, inputRequested,type):
 
 
 
-def ex():
+def ex(stop_event: threading.Event):
     # playSound()
     """
     One Time experimental setup
@@ -403,7 +407,7 @@ def ex():
         file2.flush()
         exitExperimentLoop = runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experimentCount,file)
         cleanUp(experimentCount,title,xplaneFolderPath)
-        if(exitExperimentLoop):
+        if(exitExperimentLoop or stop_event.is_set()):
             break
         experimentCount+=1
         endTime = time.time()
@@ -435,3 +439,5 @@ def ex():
 
 if __name__ == "__main__":
     ex()
+
+

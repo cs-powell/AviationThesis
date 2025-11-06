@@ -424,7 +424,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
             # "sim/flightmodel/parts/tire_vrt_def_veh" #Gear Strut Deflection (Weight on wheels)
             # "sim/flightmodel2/gear/tire_rotation_rate_rad_sec" #Tire Rotation Rate
             self.phaseFlags["roll out"] = True
-            print("Hit the brakes")
+            # print("Hit the brakes")
 
         if(self.dictionaryAccess(self.destinations,"altitude") <= 20 
            and self.dictionaryAccess(self.phaseFlags,"flare") == False): 
