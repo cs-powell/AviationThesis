@@ -10,9 +10,10 @@ import csv
 from enum import Enum
 # from playsound import playsound
 import threading as threading
+from threading import Thread
 from pathlib import Path
 import tkinter as tk
-from tkinter import filedialog
+from tkinter import filedialog 
 
 class messageType(Enum):
     REGULAR = 1
@@ -208,7 +209,6 @@ def log(cogModel, file,timeElapsed): # Get and format data for logging in output
     for d in data:
         mainString.append(str(round(d[0],precision)))
         mainString.append(",")
-
     mainString[len(mainString)-1] = "\n"
     finalString = "".join(mainString)
     file.write(finalString)
@@ -284,8 +284,8 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
     """
     Ask Experimenter if they would like to exit experiment battery early and not continue to the next experiment in the sequence 
     """
-    # exitDecision = input("Press 'y' or any key to continue, press 'n' to exit...")
-    exitDecision = "yes"
+    exitDecision = input("Press 'y' or any key to continue, press 'n' to exit...")
+    # exitDecision = "yes"
     
     if(exitDecision == "n"):
         exitExperimentLoop = True
@@ -313,7 +313,7 @@ def setUp(xplaneFolderPath):
 def cleanUp(count,title,xplaneFolderPath):
     now = datetime.datetime
     dir = Path(__file__).parent.parent.parent.parent
-    shutil.copy(str(xplaneFolderPath) + "Data.txt", str(dir) + "/Project_Data/Current Experiment/" + str(count)+ "_" + title + ".txt")
+    shutil.copy(str(xplaneFolderPath) + "Data.txt", str(dir) + "/Project_Data/Current Experiment/" + str(count)+ "_" + title + ".csv")
     specialPrint("Data File Ready",False,messageType.REGULAR)
 
     # shutil.copy("/Users/flyingtopher/X-Plane 11/Data.txt", "/Users/flyingtopher/Desktop/Test Destination/" + title + "_"+ count + "_" + str(now.now()) + "_" + ".txt")
@@ -335,6 +335,29 @@ def specialPrint(text, inputRequested,type):
         print(text)
         print("*" * 81 + "\n")
 
+# def countDown(seconds,startTime):
+#     global remaining
+#     while(remaining > 0):
+#         remaining = seconds - (time.time() - startTime)
+    
+
+# def awaitInput(prompt):
+#     userInput = input(prompt)
+
+
+# def inputLoop(prompt,duration):
+#     t1 = Thread(target=countDown(duration))
+#     t2 = Thread(target=awaitInput(prompt))
+
+#     t1.start()
+#     t2.start()
+
+#     t1.join()
+#     t2
+
+
+#     return userInput
+
 
 
 def ex():
@@ -355,7 +378,11 @@ def ex():
 
     # dir = Path(__file__).parent.parent.parent
     # dimkdir(exist_ok=True, parents=True)
+
+    ## Current Experiment Folder Setup
     Path(str(dir) + "/Project_Data/Current Experiment").mkdir(exist_ok=True, parents=True)
+
+
     file2 = open(str(dir) + "/Project_Data/Current Experiment/CurrentExperimentList.txt", 'a+')
     file2.write(str(title) + "\n")
     startTime = time.time()
@@ -375,13 +402,28 @@ def ex():
         file2.write(str(experimentCount) +" // " + str(currentConditions))
         file2.flush()
         exitExperimentLoop = runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experimentCount,file)
+        cleanUp(experimentCount,title,xplaneFolderPath)
         if(exitExperimentLoop):
             break
-        cleanUp(experimentCount,title,xplaneFolderPath)
         experimentCount+=1
         endTime = time.time()
         elapsed = endTime-startTime
         file2.write(" " + str(elapsed) + "\n")
+        
+        # nextExperimentTimeout = 5
+        # specialPrint("Next Experiment Starting in " + str(nextExperimentTimeout) + " seconds; Type 'n' to cancel", False,messageType.REGULAR)
+        # nextExperimentTimeoutCounter = time.time()
+        # continueToNextExperiment = True
+        # while(time.time() - nextExperimentTimeoutCounter < nextExperimentTimeout):
+        #     decision = input("Press 'n' to cancel next experiment or any other key to continue: ")
+        #     if(decision == 'n'):
+        #         continueToNextExperiment = False
+        #         break
+
+        # if(not continueToNextExperiment):
+        #    break
+
+
         # pag.alert(text="Experiment " + str(experimentCount+1) + " complete. Starting new Experiment", title="EXPERIMENT STATUS UPDATE")
     """
     End of Experiments
