@@ -202,10 +202,11 @@ def log(cogModel, file,timeElapsed): # Get and format data for logging in output
     data = cogModel.client.getDREFs(sources)
     mainString = []
     # data = client.readDATA()
-    mainString.append(str(timeElapsed))
+    precision = 6
+    mainString.append(str(round(timeElapsed,precision)))
     mainString.append(",")
     for d in data:
-        mainString.append(str(d[0]))
+        mainString.append(str(round(d[0],precision)))
         mainString.append(",")
 
     mainString[len(mainString)-1] = "\n"
@@ -309,10 +310,10 @@ def setUp(xplaneFolderPath):
     file.close()
     specialPrint("Data Collection File Ready",False,messageType.REGULAR)
 
-def cleanUp(count,title):
+def cleanUp(count,title,xplaneFolderPath):
     now = datetime.datetime
-    dir = Path(__file__).parent.parent.parent
-    shutil.copy("/Users/flyingtopher/X-Plane 11/Data.txt", str(dir) + "/Project_Data/Current Experiment/" + str(count)+ "_" + title + ".txt")
+    dir = Path(__file__).parent.parent.parent.parent
+    shutil.copy(str(xplaneFolderPath) + "Data.txt", str(dir) + "/Project_Data/Current Experiment/" + str(count)+ "_" + title + ".txt")
     specialPrint("Data File Ready",False,messageType.REGULAR)
 
     # shutil.copy("/Users/flyingtopher/X-Plane 11/Data.txt", "/Users/flyingtopher/Desktop/Test Destination/" + title + "_"+ count + "_" + str(now.now()) + "_" + ".txt")
@@ -344,7 +345,7 @@ def ex():
     dir = Path(__file__).parent.parent.parent.parent
     prefix = specialPrint("Please Enter Experiment Set Title, leave blank for trial runs", True, messageType.REGULAR) 
     experimentConditionMatrix = loadFile()
-    startAt = input("Start At Experiment # 1 to " + str(len(experimentConditionMatrix)-1))
+    startAt = input("Start At Experiment #1 to " + str(len(experimentConditionMatrix)-1))
     title = str(prefix + "--" + experimentConditionMatrix[0][0])
     specialPrint("Title is: " + title, False, messageType.REGULAR)
     allowPrinting = False
@@ -376,7 +377,7 @@ def ex():
         exitExperimentLoop = runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experimentCount,file)
         if(exitExperimentLoop):
             break
-        cleanUp(experimentCount,title)
+        cleanUp(experimentCount,title,xplaneFolderPath)
         experimentCount+=1
         endTime = time.time()
         elapsed = endTime-startTime
