@@ -219,7 +219,7 @@ def log(cogModel, file,timeElapsed): # Get and format data for logging in output
     file.flush()
     # file.write(str(timeElapsed) + "," + str(data[0][0]) + "," + str(data[1][0]) + "," + str(data[2][0]) + "," + str(data[3][0]) +"\n")
 
-def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experimentCount,file):
+def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experimentCount,file, stop_event: threading.Event):
     specialPrint("New Experiment\nSetting Up the Simulation",False,messageType.REGULAR)
     startTime = 0
     endTime = 0
@@ -227,7 +227,7 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
     experimentInProgress = True
     timeoutLimit = 10
     newExperiment =  isNewExperiment
-    while(timeElapsed <= timeoutLimit and experimentInProgress):
+    while(timeElapsed <= timeoutLimit and experimentInProgress and (not stop_event.is_set())):
         try:
             with xpc.XPlaneConnect() as client:
                 """
@@ -255,7 +255,8 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
                 startTime = time.time()
                 endTime =   time.time()
                 elapsed =   endTime - startTime
-                while(experimentInProgress):
+                while(experimentInProgress and (not stop_event.is_set())):
+                    print(stop_event.is_set())
                     elapsed = endTime - startTime
                     if(elapsed > currentDelay):
                         cogModel.update_aircraft_state() 
@@ -291,7 +292,7 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
     exitDecision = input("Press 'y' or any key to continue, press 'n' to exit...")
     # exitDecision = "yes"
     
-    if(exitDecision == "n"):
+    if(exitDecision == "n" or stop_event.is_set()):
         exitExperimentLoop = True
     else:
         exitExperimentLoop = False
@@ -390,11 +391,13 @@ def ex(stop_event: threading.Event):
     file2 = open(str(dir) + "/Project_Data/Current Experiment/CurrentExperimentList.txt", 'a+')
     file2.write(str(title) + "\n")
     startTime = time.time()
-    xplaneFolderPath = filedialog.askdirectory(
-        title="Select The X-Plane 11 Folder",
-        initialdir="/",  # Optional: set initial directory
-        # filetypes=(("Text files", "*.txt"), ("All files", "*.*")) # Optional: filter file types
-        )
+    # xplaneFolderPath = filedialog.askdirectory(
+    #     title="Select The X-Plane 11 Folder",
+    #     initialdir="/",  # Optional: set initial directory
+    #     # filetypes=(("Text files", "*.txt"), ("All files", "*.*")) # Optional: filter file types
+    #     )
+    xplaneFolderPath = "/Users/flyingtopher/Applications/X-Plane 11"
+
     """
     Experiment Loop
     """
@@ -405,7 +408,7 @@ def ex(stop_event: threading.Event):
         currentConditions = experimentConditionMatrix[experimentCount]
         file2.write(str(experimentCount) +" // " + str(currentConditions))
         file2.flush()
-        exitExperimentLoop = runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experimentCount,file)
+        exitExperimentLoop = runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experimentCount,file,stop_event)
         cleanUp(experimentCount,title,xplaneFolderPath)
         if(exitExperimentLoop or stop_event.is_set()):
             break
