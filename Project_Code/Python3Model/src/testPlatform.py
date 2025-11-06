@@ -370,6 +370,11 @@ def ex(stop_event: threading.Event):
     """
     One Time experimental setup
     """
+
+    if stop_event == None:
+        stop_event = threading.Event()
+        stop_event.clear()
+    
     dir = Path(__file__).parent.parent.parent.parent
     prefix = specialPrint("Please Enter Experiment Set Title, leave blank for trial runs", True, messageType.REGULAR) 
     experimentConditionMatrix = loadFile()
