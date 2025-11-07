@@ -27,47 +27,47 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Setting DREF variables and loading into drefs array
         """
-        airspeedDREF = "sim/cockpit2/gauges/indicators/airspeed_kts_pilot"
-        rollDREF = "sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot"
+        airspeedDREF        = "sim/cockpit2/gauges/indicators/airspeed_kts_pilot"
+        rollDREF            = "sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot"
         magneticHeadingDREF = "sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot"
-        latitudeDREF = "sim/flightmodel/position/latitude" ## Lat
-        longitudeDREF = "sim/flightmodel/position/longitude" ##Long
-        verticalSpeedDREF = "sim/flightmodel/position/vh_ind_fpm"
-        altitudeAGLDREF = "sim/flightmodel/position/y_agl"
-        pitchDREF = "sim/flightmodel/position/true_theta"
-        brakeDREF = "sim/cockpit2/controls/parking_brake_ratio"
-        wheelSpeedDREF = "sim/flightmodel2/gear/tire_rotation_speed_rad_sec"
-        wheelWeightDREF = "sim/flightmodel/parts/tire_vrt_def_veh"
+        latitudeDREF        = "sim/flightmodel/position/latitude" ## Lat
+        longitudeDREF       = "sim/flightmodel/position/longitude" ##Long
+        verticalSpeedDREF   = "sim/flightmodel/position/vh_ind_fpm"
+        altitudeAGLDREF     = "sim/flightmodel/position/y_agl"
+        pitchDREF           = "sim/flightmodel/position/true_theta"
+        brakeDREF           = "sim/cockpit2/controls/parking_brake_ratio"
+        wheelSpeedDREF      = "sim/flightmodel2/gear/tire_rotation_speed_rad_sec"
+        wheelWeightDREF     = "sim/flightmodel/parts/tire_vrt_def_veh"
         # self.sources = [airspeedDREF,rollDREF,magneticHeadingDREF,verticalSpeedDREF,altitudeAGLDREF,pitchDREF,brakeDREF,wheelSpeedDREF,wheelWeightDREF]
 
         self.sources = {
-            "airspeed" : airspeedDREF,
-            "roll" : rollDREF,
-            "heading" : magneticHeadingDREF,
-            "latitude": latitudeDREF,
-            "longitude": longitudeDREF,
-            "vertical speed" : verticalSpeedDREF,
-            "altitude": altitudeAGLDREF,
-            "pitch" : pitchDREF,
-            "brakes": brakeDREF,
-            "wheelSpeed": wheelSpeedDREF,
-            "wheelWeight": wheelWeightDREF
+            "airspeed"          : airspeedDREF,
+            "roll"              : rollDREF,
+            "heading"           : magneticHeadingDREF,
+            "latitude"          : latitudeDREF,
+            "longitude"         : longitudeDREF,
+            "vertical speed"    : verticalSpeedDREF,
+            "altitude"          : altitudeAGLDREF,
+            "pitch"             : pitchDREF,
+            "brakes"            : brakeDREF,
+            "wheelSpeed"        : wheelSpeedDREF,
+            "wheelWeight"       : wheelWeightDREF
         }
 
         """
         Initial Initialization of destination Variables and loading into destinations array
         """
-        airspeed = self.client.getDREF("sim/cockpit2/gauges/indicators/airspeed_kts_pilot")
-        roll = self.client.getDREF("sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot")
-        heading = self.client.getDREF("sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot")
-        latitude = self.client.getDREF("sim/flightmodel/position/latitude") ##Current Lat 
-        longitude = self.client.getDREF("sim/flightmodel/position/longitude") ##Current Long
-        descent_rate = self.client.getDREF("sim/flightmodel/position/vh_ind_fpm")
-        altitude = self.client.getDREF("sim/flightmodel/position/y_agl")
-        pitch = self.client.getDREF("sim/flightmodel/position/true_theta")
-        brake = self.client.getDREF("sim/cockpit2/controls/parking_brake_ratio")
-        wheelS = self.client.getDREF("sim/flightmodel2/gear/tire_rotation_speed_rad_sec")
-        wheelW = self.client.getDREF("sim/flightmodel/parts/tire_vrt_def_veh")
+        airspeed        = self.client.getDREF("sim/cockpit2/gauges/indicators/airspeed_kts_pilot")
+        roll            = self.client.getDREF("sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot")
+        heading         = self.client.getDREF("sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot")
+        latitude        = self.client.getDREF("sim/flightmodel/position/latitude") ##Current Lat 
+        longitude       = self.client.getDREF("sim/flightmodel/position/longitude") ##Current Long
+        descent_rate    = self.client.getDREF("sim/flightmodel/position/vh_ind_fpm")
+        altitude        = self.client.getDREF("sim/flightmodel/position/y_agl")
+        pitch           = self.client.getDREF("sim/flightmodel/position/true_theta")
+        brake           = self.client.getDREF("sim/cockpit2/controls/parking_brake_ratio")
+        wheelS          = self.client.getDREF("sim/flightmodel2/gear/tire_rotation_speed_rad_sec")
+        wheelW          = self.client.getDREF("sim/flightmodel/parts/tire_vrt_def_veh")
 
         HARDCODE_HEADING = 179
         
@@ -84,19 +84,19 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.wheelWeight = wheelW[0]        
         # self.destinations = [self.airspeed,self.roll,self.heading,self.descent_rate,self.altitude,self.pitch,self.brakes,self.wheelSpeed,self.wheelWeight]
         
-        self.destinations = {
-            "airspeed" : self.airspeed,
-            "roll" : self.roll,
-            "heading" : self.heading,
-            "latitude": self.latitude,
-            "longitude": self.longitude,
-            "vertical speed" : self.descent_rate,
-            "altitude": self.altitude,
-            "pitch" : self.pitch,
-            "brakes": self.brakes,
-            "wheelSpeed": self.wheelSpeed,
-            "wheelWeight": self.wheelWeight
-        }
+        # self.destinations = {
+        #     "airspeed" : self.airspeed,
+        #     "roll" : self.roll,
+        #     "heading" : self.heading,
+        #     "latitude": self.latitude,
+        #     "longitude": self.longitude,
+        #     "vertical speed" : self.descent_rate,
+        #     "altitude": self.altitude,
+        #     "pitch" : self.pitch,
+        #     "brakes": self.brakes,
+        #     "wheelSpeed": self.wheelSpeed,
+        #     "wheelWeight": self.wheelWeight
+        # }
 
         """
         Initial Initialization of target Values
@@ -116,14 +116,14 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.descent = False
         self.flare = False
         self.rollOut = False
-        self.currentState = 0
-        # self.stateFlags = [self.descent,self.flare,self.rollOut]
-        self.phaseFlags = {
-            "descent" : self.descent,
-            "flare" : self.flare,
-            "roll out" : self.rollOut
-        }
 
+        # self.currentState = 0
+        # self.stateFlags = [self.descent,self.flare,self.rollOut]
+        # self.phaseFlags = {
+        #     "descent" : self.descent,
+        #     "flare" : self.flare,
+        #     "roll out" : self.rollOut
+        # }
 
         # Declare the state for previous values
         self.previous_airspeed = None
@@ -139,6 +139,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.integral_Longitude = 0
         self.integral_descent_rate = 0
 
+
         #Flare Specific Parameters
         self.integral_pitch = 0 
 
@@ -147,6 +148,49 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.Ki = 0.01  # Integral gain                
         # self.Ki = 2  # Integral gain
 
+        self.globalVariables = {
+            "destinations" : {
+                "airspeed" : self.airspeed,
+                "roll" : self.roll,
+                "heading" : self.heading,
+                "latitude": self.latitude,
+                "longitude": self.longitude,
+                "vertical speed" : self.descent_rate,
+                "altitude": self.altitude,
+                "pitch" : self.pitch,
+                "brakes": self.brakes,
+                "wheelSpeed": self.wheelSpeed,
+                "wheelWeight": self.wheelWeight
+            },
+            "targetValues" : {
+                "target_airspeed"       : self.target_airspeed,
+                "target_roll"           : self.target_roll,
+                "target_Lat"            :  self.target_Lat,
+                "target_Long"           : self.target_Long,
+                "target_descent_rate"   : self.target_descent_rate,
+                "target_altitude"       :  self.target_altitude,
+                "target_pitch"          : self.target_pitch
+            },
+            "phaseFlags" : {
+                "descent"   : self.descent,
+                "flare"     : self.flare,
+                "roll out"  : self.rollOut
+            },
+            "previousValues" : {
+                "previous_airspeed"             : self.previous_airspeed,
+                "previous_roll"                 : self.previous_roll,
+                "self.previous_heading"         : self.previous_heading,
+                "self.previous_descent_rate"    : self.previous_descent_rate
+            },
+            "integralValues" : {
+                "Kp" : self.Kp,
+                "Ki" : self.Ki
+            }
+        }
+
+       
+
+       
 
         """
         Variable Atlas Schema: source => destination => target
@@ -157,16 +201,18 @@ class AircraftLandingModel(pyactr.ACTRModel):
         #     self.variableAtlas[0] = [self.sources[idx],self.destinations[idx],self.targets[idx]]
         #     idx += 1
 
-    def dictionaryAccess(self,dictionary,key):
+    def dictionaryAccess(self,dictionary,keys):
         # print("dictionary access for: " + str(key))
-        result = dictionary[key]
+        nestedDictionary = dictionary
+        for key in keys:
+            result = nestedDictionary[key]
+            nestedDictionary = result
+        
         if isinstance(result, tuple):
             return result[0]
         else: 
             return result
 
-        
-        
     
     def reassignClient(self,newClient):
         self.client = newClient
@@ -291,7 +337,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
         ###Transformations:
         #Simple Sigmoid:
-        control_value = (2 / (1 + math.exp(-(control_value/scalingFactor)))) - 1
+        control_value = (2 / (1 + math.exp(-(control_value/scalingFactor)))) - 1 ## Come back to this 11-7
 
         # self.printVariables(print,target,current,error,(self.Kp * error),(self.Ki * integral_error))
         return control_value, integral_error  # Return control value and updated integral error
@@ -411,11 +457,9 @@ class AircraftLandingModel(pyactr.ACTRModel):
             brakedref = "sim/cockpit2/controls/parking_brake_ratio"
             brake = 1
             self.client.sendDREF(brakedref,brake)
-
         self.client.sendCTRL([yoke_pull, yoke_steer, rudder, throttle, -998, -998])  # Control inputs: [yoke_pull, yoke_steer, rudder, throttle]
 
     def conditionChecks(self):
-
         if(self.dictionaryAccess(self.destinations,"wheelWeight") > 0.01 
            and self.dictionaryAccess(self.destinations,"wheelSpeed") > 1):
             #Two Parameters to Confirm Touchdown and wheel contact
@@ -443,7 +487,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
     # Update the model's DM based on X-Plane data
     def update_aircraft_state(self):
         """
-        Faster Method 
+        Faster Method
         """
         self.getAndLoadDREFS()
         self.conditionChecks()
