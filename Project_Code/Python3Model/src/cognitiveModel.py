@@ -5,7 +5,7 @@ import math
 # import geopy
 from geographiclib.geodesic import Geodesic as geo
 from rich import print
-
+from sandbox import sandbox as sb
 # Initialize XPlaneConnect client
 class scaleFactor():
     SCALEYOKEPULL = 10
@@ -70,6 +70,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         wheelW          = self.client.getDREF("sim/flightmodel/parts/tire_vrt_def_veh")
 
         HARDCODE_HEADING = 179
+        
         
         self.airspeed = airspeed[0]
         self.roll = roll[0]

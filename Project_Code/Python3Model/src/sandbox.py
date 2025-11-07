@@ -1,7 +1,14 @@
 import subprocess
 import os
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
+class sandbox: 
+    SCALEYOKEPULL = 10
+    SCALEYOKESTEER = 10
+    SCALERUDDER = 10
+    SCALELATITUDERUDDER = 0.001
+    SCALETHROTTLE = 1000
+
     globalVariables = {
             "destinations" : {
                 "airspeed" : 1,
@@ -45,5 +52,5 @@ if __name__ == "__main__":
         
     # allParams = globalVariables.items()
     # print(dictionaryAccess(globalVariables,[str(item1[0]),str(item2)]))
-    results = dictionaryAccess(globalVariables,["targetValues","target_airspeed"])
-    print(results)
+    # results = dictionaryAccess(globalVariables,["targetValues","target_airspeed"])
+    # print(results)
