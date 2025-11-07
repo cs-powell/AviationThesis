@@ -460,8 +460,8 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.client.sendCTRL([yoke_pull, yoke_steer, rudder, throttle, -998, -998])  # Control inputs: [yoke_pull, yoke_steer, rudder, throttle]
 
     def conditionChecks(self):
-        if(self.dictionaryAccess(self.destinations,"wheelWeight") > 0.01 
-           and self.dictionaryAccess(self.destinations,"wheelSpeed") > 1):
+        if(self.dictionaryAccess(self.globalVariables,["destinations","wheelWeight"]) > 0.01 
+           and self.dictionaryAccess(self.globalVariables,["destinations","wheelSpeed"]) > 1):
             #Two Parameters to Confirm Touchdown and wheel contact
             # "sim/flightmodel/parts/tire_vrt_def_veh" #Gear Strut Deflection (Weight on wheels)
             # "sim/flightmodel2/gear/tire_rotation_rate_rad_sec" #Tire Rotation Rate
