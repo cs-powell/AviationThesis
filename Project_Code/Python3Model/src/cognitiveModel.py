@@ -14,6 +14,7 @@ class scaleFactor():
     SCALELATITUDERUDDER = 0.001
     SCALETHROTTLE = 1000
 
+
 ###Define variables/parameters for aircraft class/category : Wisdom of Raju 
 class AircraftLandingModel(pyactr.ACTRModel):
     def __init__(self,client,printFlag):
