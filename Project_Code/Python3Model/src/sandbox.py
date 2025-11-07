@@ -25,20 +25,25 @@ if __name__ == "__main__":
                 "target_altitude"       :  17,
                 "target_pitch"          : 18
             }
-            }
+        }
     
-    def dictionaryAccess(self,dictionary,keys):
+    def dictionaryAccess(dictionary,keys):
         # print("dictionary access for: " + str(key))
         nestedDictionary = dictionary
-        for key in keys:
-            result = nestedDictionary[key]
-            nestedDictionary = result
-        
+
+        try: 
+            for key in keys:
+                result = nestedDictionary[key]
+                nestedDictionary = result
+        except TypeError as e:
+            print("bottomed out in dictionary access, too many keys -- returning last good value")
+
         if isinstance(result, tuple):
             return result[0]
         else: 
             return result
         
-    result = self.dictionaryAccess(globalVariables,["destinations","airspeed"])
-
-    print(result)
+    # allParams = globalVariables.items()
+    # print(dictionaryAccess(globalVariables,[str(item1[0]),str(item2)]))
+    results = dictionaryAccess(globalVariables,["targetValues","target_airspeed"])
+    print(results)
