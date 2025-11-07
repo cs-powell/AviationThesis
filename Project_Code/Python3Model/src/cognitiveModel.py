@@ -29,7 +29,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         airspeedDREF = "sim/cockpit2/gauges/indicators/airspeed_kts_pilot"
         rollDREF = "sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot"
         magneticHeadingDREF = "sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot"
-        latitudeDREF = "sim/flightmodel/position/latitude" ## Lat 
+        latitudeDREF = "sim/flightmodel/position/latitude" ## Lat
         longitudeDREF = "sim/flightmodel/position/longitude" ##Long
         verticalSpeedDREF = "sim/flightmodel/position/vh_ind_fpm"
         altitudeAGLDREF = "sim/flightmodel/position/y_agl"
@@ -332,9 +332,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
             self.integral_Longitude = 0
 
         rudder, self.integral_Longitude = self.proportionalIntegralControl(0,self.dictionaryAccess(self.destinations,"longitude"), self.target_Long, self.integral_Longitude,scaleFactor.SCALELATITUDERUDDER)
-
-        
-        
         
         throttle, self.integral_descent_rate = self.proportionalIntegralControl(0,self.dictionaryAccess(self.destinations,"vertical speed"), self.target_descent_rate, self.integral_descent_rate,scaleFactor.SCALETHROTTLE)
         ### 1. For Calculated Yoke and Throttle Values 

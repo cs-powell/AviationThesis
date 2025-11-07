@@ -256,6 +256,7 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
                 endTime =   time.time()
                 elapsed =   endTime - startTime
                 while(experimentInProgress and (not stop_event.is_set())):
+                    
                     print(stop_event.is_set())
                     elapsed = endTime - startTime
                     if(elapsed > currentDelay):
@@ -289,8 +290,10 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
     """
     Ask Experimenter if they would like to exit experiment battery early and not continue to the next experiment in the sequence 
     """
-    exitDecision = input("Press 'y' or any key to continue, press 'n' to exit...")
-    # exitDecision = "yes"
+
+    if(not stop_event.is_set()):
+        exitDecision = input("Press 'y' or any key to continue, press 'n' to exit...")
+        # exitDecision = "yes"
     
     if(exitDecision == "n" or stop_event.is_set()):
         exitExperimentLoop = True
@@ -365,7 +368,7 @@ def specialPrint(text, inputRequested,type):
 
 
 
-def ex(stop_event: threading.Event):
+def ex(stop_event: threading.Event, experiment_name : str):
     # playSound()
     """
     One Time experimental setup
@@ -376,7 +379,12 @@ def ex(stop_event: threading.Event):
         stop_event.clear()
     
     dir = Path(__file__).parent.parent.parent.parent
-    prefix = specialPrint("Please Enter Experiment Set Title, leave blank for trial runs", True, messageType.REGULAR) 
+    prefix = ""
+    if(experiment_name == "" or experiment_name == None):
+        prefix = specialPrint("Please Enter Experiment Set Title, leave blank for trial runs", True, messageType.REGULAR) 
+    else:
+        prefix = experiment_name
+    
     experimentConditionMatrix = loadFile()
     startAt = input("Start At Experiment #1 to " + str(len(experimentConditionMatrix)-1))
     title = str(prefix + "--" + experimentConditionMatrix[0][0])
