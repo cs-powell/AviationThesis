@@ -41,7 +41,6 @@ def loadFile():
         matrix = list(csv.reader(f,delimiter=','))
         # print(matrix)
         return matrix
-    
 
 def selectWeather(matrix,experimentNumber):
     return matrix[experimentNumber]

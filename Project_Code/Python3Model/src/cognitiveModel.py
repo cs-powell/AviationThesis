@@ -1,3 +1,4 @@
+from Project_Code.Python3Model.src.scaleFactor import scaleFactor
 import pyactr
 # from XPlaneConnect import *
 import xpc
@@ -6,17 +7,13 @@ import math
 from geographiclib.geodesic import Geodesic as geo
 from rich import print
 from sandbox import sandbox as sb
+# import scaleFactor as sf
 # Initialize XPlaneConnect client
-class scaleFactor():
-    SCALEYOKEPULL = 10
-    SCALEYOKESTEER = 10
-    SCALERUDDER = 10
-    SCALELATITUDERUDDER = 0.001
-    SCALETHROTTLE = 1000
 
 
-###Define variables/parameters for aircraft class/category : Wisdom of Raju 
+### Define variables/parameters for aircraft class/category : Wisdom of Raju 
 class AircraftLandingModel(pyactr.ACTRModel):
+    # TODO: remove pyactr dependency
     def __init__(self,client,printFlag):
         super().__init__()
         self.client = client
@@ -24,6 +21,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.printControlsFlag = printFlag
         self.targetLat = 39.895791
         self.targetLong = -104.696032
+
         """
         Setting DREF variables and loading into drefs array
         """
@@ -55,7 +53,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         }
 
         """
-        Initial Initialization of destination Variables and loading into destinations array
+        Initialization of destination Variables and loading into destinations array
         """
         airspeed        = self.client.getDREF("sim/cockpit2/gauges/indicators/airspeed_kts_pilot")
         roll            = self.client.getDREF("sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot")
@@ -230,7 +228,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
             self.destinations[key] = results[idx]
             idx+=1
         #Update Target Heading
-        lat = self.client.getDREF("sim/flightmodel/position/latitude") ##Current Lat 
+        lat  = self.client.getDREF("sim/flightmodel/position/latitude") ##Current Lat 
         long = self.client.getDREF("sim/flightmodel/position/longitude") ##Current Long
         self.get_bearing(lat[0],self.targetLat,long[0],self.targetLong)
         
@@ -424,6 +422,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
         rudder = rudder * -1
         additive = rudder*1.0
+        # TODO: Wrangle The Additive
         
         #Switch Target for Pitch to Local Pitch Axis (ex. +10 Degrees nose up)
         if(self.printControlsFlag):
@@ -439,7 +438,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         # print("Yoke Pull:" + str(yoke_pull))
 
         #Set the Trim to a value that allows the aircraft to osscilate around the target airspeed
-        if(self.dictionaryAccess(self.phaseFlags,"flare") == False):
+        if (self.dictionaryAccess(self.phaseFlags,"flare") == False):
             trimdref = "sim/flightmodel/controls/elv_trim"
             trim = -0.3
             self.client.sendDREF(trimdref,trim)
@@ -452,8 +451,10 @@ class AircraftLandingModel(pyactr.ACTRModel):
         if(self.dictionaryAccess(self.phaseFlags,"roll out")):
             #Cut the Throttle
             throttle = 0
+
             #Release Yoke Back Pressure (Pitch Up Pressure from the flare maneuver)
             yoke_pull = 0
+
             #Hit the Brakes
             brakedref = "sim/cockpit2/controls/parking_brake_ratio"
             brake = 1
@@ -469,16 +470,16 @@ class AircraftLandingModel(pyactr.ACTRModel):
             self.phaseFlags["roll out"] = True
             # print("Hit the brakes")
 
-        if(self.dictionaryAccess(self.destinations,"altitude") <= 20 
-           and self.dictionaryAccess(self.phaseFlags,"flare") == False): 
+        if (self.dictionaryAccess(self.globalVariables,["destinations","altitude"]) <= 20 
+            and self.dictionaryAccess((self.globalVariables,["phaseFlags","flare"]) == False)): 
             self.phaseFlags["flare"] = True
             self.Ki = 0.01  ## Increase Control Authority to compensate for decreasing airspeed
             print("Altitude < 500; Flare Set True")
 
-        if(self.dictionaryAccess(self.destinations,"wheelWeight") > 0.01 
-           and self.dictionaryAccess(self.destinations,"wheelSpeed") < 1 
-           and self.dictionaryAccess(self.destinations,"airspeed") < 2 
-           and self.dictionaryAccess(self.destinations,"brakes") == 1):            
+        if(self.dictionaryAccess(self.globalVariables,["destinations","wheelWeight"]) > 0.01 
+           and self.dictionaryAccess(self.globalVariables,["destinations","wheelSpeed"]) < 1 
+           and self.dictionaryAccess(self.globalVariables,["destinations","airspeed"]) < 2 
+           and self.dictionaryAccess(self.globalVariables,["destinations","brakes"]) == 1):  
             self.inProgress = False
     
     def getSimulationStatus(self):
