@@ -7,6 +7,7 @@ import math
 from geographiclib.geodesic import Geodesic as geo
 from rich import print
 from sandbox import sandbox as sb
+from modelParameters import params as params
 # import scaleFactor as sf
 # Initialize XPlaneConnect client
 
@@ -69,7 +70,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
         HARDCODE_HEADING = 179
         
-        
         self.airspeed = airspeed[0]
         self.roll = roll[0]
         self.heading = HARDCODE_HEADING
@@ -109,7 +109,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.target_altitude = -998
         self.target_pitch = 25
         self.targets = [self.target_airspeed,self.target_roll,self.target_heading,self.target_Lat,self.target_Long,self.target_descent_rate,self.target_altitude,self.target_pitch]
-        
 
         #State Flags (Boolean)  & Current State (Integer)
         self.descent = False
@@ -143,8 +142,8 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.integral_pitch = 0 
 
         # Integral gains (tune these values for performance)
-        self.Kp = 0.1  # Proportional gain
-        self.Ki = 0.01  # Integral gain                
+        self.Kp = 0.1  
+        self.Ki = 0.01                
         # self.Ki = 2  # Integral gain
 
         self.globalVariables = {
@@ -182,8 +181,8 @@ class AircraftLandingModel(pyactr.ACTRModel):
                 "self.previous_descent_rate"    : self.previous_descent_rate
             },
             "integralValues" : {
-                "Kp" : self.Kp,
-                "Ki" : self.Ki
+                "Kp" : self.Kp, # Proportional gain
+                "Ki" : self.Ki # Integral gain  
             }
         }
 
@@ -223,9 +222,10 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
     def getAndLoadDREFS(self):
         results = self.client.getDREFs(self.sources.values())
+        
         idx = 0
         for key in self.sources:
-            self.destinations[key] = results[idx]
+            self.globalVariables["destinations",key] = results[idx]
             idx+=1
         #Update Target Heading
         lat  = self.client.getDREF("sim/flightmodel/position/latitude") ##Current Lat 
