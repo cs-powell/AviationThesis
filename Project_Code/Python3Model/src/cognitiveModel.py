@@ -26,32 +26,32 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Setting DREF variables and loading into drefs array
         """
-        airspeedDREF        = "sim/cockpit2/gauges/indicators/airspeed_kts_pilot"
-        rollDREF            = "sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot"
-        magneticHeadingDREF = "sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot"
-        latitudeDREF        = "sim/flightmodel/position/latitude" ## Lat
-        longitudeDREF       = "sim/flightmodel/position/longitude" ##Long
-        verticalSpeedDREF   = "sim/flightmodel/position/vh_ind_fpm"
-        altitudeAGLDREF     = "sim/flightmodel/position/y_agl"
-        pitchDREF           = "sim/flightmodel/position/true_theta"
-        brakeDREF           = "sim/cockpit2/controls/parking_brake_ratio"
-        wheelSpeedDREF      = "sim/flightmodel2/gear/tire_rotation_speed_rad_sec"
-        wheelWeightDREF     = "sim/flightmodel/parts/tire_vrt_def_veh"
+        # airspeedDREF        = "sim/cockpit2/gauges/indicators/airspeed_kts_pilot"
+        # rollDREF            = "sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot"
+        # magneticHeadingDREF = "sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot"
+        # latitudeDREF        = "sim/flightmodel/position/latitude" ## Lat
+        # longitudeDREF       = "sim/flightmodel/position/longitude" ##Long
+        # verticalSpeedDREF   = "sim/flightmodel/position/vh_ind_fpm"
+        # altitudeAGLDREF     = "sim/flightmodel/position/y_agl"
+        # pitchDREF           = "sim/flightmodel/position/true_theta"
+        # brakeDREF           = "sim/cockpit2/controls/parking_brake_ratio"
+        # wheelSpeedDREF      = "sim/flightmodel2/gear/tire_rotation_speed_rad_sec"
+        # wheelWeightDREF     = "sim/flightmodel/parts/tire_vrt_def_veh"
         # self.sources = [airspeedDREF,rollDREF,magneticHeadingDREF,verticalSpeedDREF,altitudeAGLDREF,pitchDREF,brakeDREF,wheelSpeedDREF,wheelWeightDREF]
 
-        self.sources = {
-            "airspeed"          : airspeedDREF,
-            "roll"              : rollDREF,
-            "heading"           : magneticHeadingDREF,
-            "latitude"          : latitudeDREF,
-            "longitude"         : longitudeDREF,
-            "vertical speed"    : verticalSpeedDREF,
-            "altitude"          : altitudeAGLDREF,
-            "pitch"             : pitchDREF,
-            "brakes"            : brakeDREF,
-            "wheelSpeed"        : wheelSpeedDREF,
-            "wheelWeight"       : wheelWeightDREF
-        }
+        # self.sources = {
+        #     "airspeed"          : airspeedDREF,
+        #     "roll"              : rollDREF,
+        #     "heading"           : magneticHeadingDREF,
+        #     "latitude"          : latitudeDREF,
+        #     "longitude"         : longitudeDREF,
+        #     "vertical speed"    : verticalSpeedDREF,
+        #     "altitude"          : altitudeAGLDREF,
+        #     "pitch"             : pitchDREF,
+        #     "brakes"            : brakeDREF,
+        #     "wheelSpeed"        : wheelSpeedDREF,
+        #     "wheelWeight"       : wheelWeightDREF
+        # }
 
         """
         Initialization of destination Variables and loading into destinations array
