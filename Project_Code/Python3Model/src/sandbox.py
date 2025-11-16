@@ -15,7 +15,7 @@ class sandbox:
     print(p1.b)
     print(p2.b)
 
-    p1.globalVariables.
+    # p1.globalVariables.
 
 
     # SCALEYOKEPULL = 10

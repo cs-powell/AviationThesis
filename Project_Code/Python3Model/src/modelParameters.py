@@ -1,59 +1,75 @@
 class params:
     
     def __init__(self):
-        self.sources = {
-                    "airspeed"          : "sim/cockpit2/gauges/indicators/airspeed_kts_pilot",
-                    "roll"              : "sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",
-                    "heading"           : "sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",
-                    "latitude"          : "sim/flightmodel/position/latitude",
-                    "longitude"         : "sim/flightmodel/position/longitude",
-                    "vertical speed"    : "sim/flightmodel/position/vh_ind_fpm",
-                    "altitude"          : "sim/flightmodel/position/y_agl",
-                    "pitch"             : "sim/flightmodel/position/true_theta",
-                    "brakes"            : "sim/cockpit2/controls/parking_brake_ratio",
-                    "wheelSpeed"        : "sim/flightmodel2/gear/tire_rotation_speed_rad_sec",
-                    "wheelWeight"       : "sim/flightmodel/parts/tire_vrt_def_veh"
-                }
-        
+        # self.sources = {
+        #             "airspeed"          : "sim/cockpit2/gauges/indicators/airspeed_kts_pilot",
+        #             "roll"              : "sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",
+        #             "heading"           : "sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",
+        #             "latitude"          : "sim/flightmodel/position/latitude",
+        #             "longitude"         : "sim/flightmodel/position/longitude",
+        #             "vertical speed"    : "sim/flightmodel/position/vh_ind_fpm",
+        #             "altitude"          : "sim/flightmodel/position/y_agl",
+        #             "pitch"             : "sim/flightmodel/position/true_theta",
+        #             "brakes"            : "sim/cockpit2/controls/parking_brake_ratio",
+        #             "wheelSpeed"        : "sim/flightmodel2/gear/tire_rotation_speed_rad_sec",
+        #             "wheelWeight"       : "sim/flightmodel/parts/tire_vrt_def_veh"
+        #         }
+    
 
         self.globalVariables = {
-            "destinations" : {
-                "airspeed" : ("sim/cockpit2/gauges/indicators/airspeed_kts_pilot",self.target_airspeed, self.airspeed),
-                "roll" : ("sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",self.target_roll,self.roll),
-                "heading" : ("sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",self.target_heading,self.heading),
-                "latitude": ("sim/flightmodel/position/latitude",self.latitude),
-                "longitude": ("sim/flightmodel/position/longitude",self.longitude),
-                "vertical speed" : ("sim/flightmodel/position/vh_ind_fpm", self.descent_rate),
-                "altitude": self.altitude,
-                "pitch" : self.pitch,
-                "brakes": self.brakes,
-                "wheelSpeed": self.wheelSpeed,
-                "wheelWeight": self.wheelWeight
-            },
-            "targetValues" : {
-                "target_airspeed"       : self.target_airspeed,
-                "target_roll"           : self.target_roll,
-                "target_Lat"            :  self.target_Lat,
-                "target_Long"           : self.target_Long,
-                "target_descent_rate"   : self.target_descent_rate,
-                "target_altitude"       :  self.target_altitude,
-                "target_pitch"          : self.target_pitch
+            "aircraft_state" : {
+                "airspeed"          : ("sim/cockpit2/gauges/indicators/airspeed_kts_pilot",self.target_airspeed, self.airspeed),
+                "roll"              : ("sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",self.target_roll,self.roll),
+                "heading"           : ("sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",self.target_heading,self.heading),
+                "latitude"          : ("sim/flightmodel/position/latitude",self.target_Lat,self.latitude),
+                "longitude"         : ("sim/flightmodel/position/longitude",self.target_Long,self.longitude),
+                "vertical speed"    : ("sim/flightmodel/position/vh_ind_fpm", self.target_descent_rate,self.descent_rate),
+                "altitude"          : ("sim/flightmodel/position/y_agl",self.target_altitude,self.altitude),
+                "pitch"             : ("sim/flightmodel/position/true_theta",self.target_pitch,self.pitch),
+                "brakes"            : ("sim/cockpit2/controls/parking_brake_ratio",None,self.brakes),
+                "wheelSpeed"        : ("sim/flightmodel2/gear/tire_rotation_speed_rad_sec",None,self.wheelSpeed),
+                "wheelWeight"       : ("sim/flightmodel/parts/tire_vrt_def_veh",None,self.wheelWeight)
             },
             "phaseFlags" : {
-                "descent"   : self.descent,
-                "flare"     : self.flare,
-                "roll out"  : self.rollOut
+                "descent"           : True,
+                "flare"             : False,
+                "roll out"          : False
             },
             "previousValues" : {
-                "previous_airspeed"             : self.previous_airspeed,
-                "previous_roll"                 : self.previous_roll,
-                "self.previous_heading"         : self.previous_heading,
-                "self.previous_descent_rate"    : self.previous_descent_rate
+                "previous_airspeed"             : 0,
+                "previous_roll"                 : 0,
+                "self.previous_heading"         : 0,
+                "self.previous_descent_rate"    : 0
             },
             "integralValues" : {
-                "Kp" : self.Kp, # Proportional gain
-                "Ki" : self.Ki # Integral gain  
+                "Kp" : 0.1, # Proportional gain
+                "Ki" : 0.01  # Integral gain  
             }
+
+            # "targetValues" : {
+            #     "target_airspeed"       : self.target_airspeed,
+            #     "target_roll"           : self.target_roll,
+            #     "target_Lat"            :  self.target_Lat,
+            #     "target_Long"           : self.target_Long,
+            #     "target_descent_rate"   : self.target_descent_rate,
+            #     "target_altitude"       :  self.target_altitude,
+            #     "target_pitch"          : self.target_pitch
+            # },
+            # "phaseFlags" : {
+            #     "descent"   : self.descent,
+            #     "flare"     : self.flare,
+            #     "roll out"  : self.rollOut
+            # },
+            # "previousValues" : {
+            #     "previous_airspeed"             : self.previous_airspeed,
+            #     "previous_roll"                 : self.previous_roll,
+            #     "self.previous_heading"         : self.previous_heading,
+            #     "self.previous_descent_rate"    : self.previous_descent_rate
+            # },
+            # "integralValues" : {
+            #     "Kp" : self.Kp, # Proportional gain
+            #     "Ki" : self.Ki # Integral gain  
+            # }
         }
 
 

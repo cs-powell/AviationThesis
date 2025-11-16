@@ -319,7 +319,8 @@ class AircraftLandingModel(pyactr.ACTRModel):
         
 
 
-    def proportionalIntegralControl(self,print, current, target, integral_error,scalingFactor):
+    def proportionalIntegralControl(self,print,k, delta_theta, k_i,theta,delta_t):
+        #  target, integral_error,scalingFactor
         """
         Proportional-Integral control rule implementation for multiple parameters.
         """
