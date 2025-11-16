@@ -325,22 +325,26 @@ class AircraftLandingModel(pyactr.ACTRModel):
         Proportional-Integral control rule implementation for multiple parameters.
         """
         # Calculate the error (current - target)
-        error = target - current
-        # error = current - target
-        # print("Error: " +  str(error))
-        # Update the integral of the error
-        integral_error += error
-        # print("Integral_error: " +  str(integral_error))
+        # error = target - current
+        # # error = current - target
+        # # print("Error: " +  str(error))
+        # # Update the integral of the error
+        # integral_error += error
+        # # print("Integral_error: " +  str(integral_error))
 
-        # Calculate the control value using the PI formula
-        control_value = (self.Kp * error) + (self.Ki * integral_error)
+        # # Calculate the control value using the PI formula
+        # control_value = (self.Kp * error) + (self.Ki * integral_error)
 
-        ###Transformations:
-        #Simple Sigmoid:
-        control_value = (2 / (1 + math.exp(-(control_value/scalingFactor)))) - 1 ## Come back to this 11-7
+        # ###Transformations:
+        # #Simple Sigmoid:
+        # control_value = (2 / (1 + math.exp(-(control_value/scalingFactor)))) - 1 ## Come back to this 11-7
 
         # self.printVariables(print,target,current,error,(self.Kp * error),(self.Ki * integral_error))
-        return control_value, integral_error  # Return control value and updated integral error
+        # return control_value, integral_error  # Return control value and updated integral error
+
+        delta_control = k*delta_theta + k_i*theta*delta_t 
+        return delta_control
+        
 
 
     def update_controls_simultaneously(self):
@@ -432,6 +436,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.send_controls_to_xplane(yoke_pull, yoke_steer+additive, rudder, throttle)
 
     def send_controls_to_xplane(self, yoke_pull, yoke_steer, rudder, throttle):
+        # TODO: Consolidate sendDREF calls
         """
         Sends all control inputs to X-Plane using XPlaneConnect
         """
@@ -460,6 +465,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
             brakedref = "sim/cockpit2/controls/parking_brake_ratio"
             brake = 1
             self.client.sendDREF(brakedref,brake)
+
         self.client.sendCTRL([yoke_pull, yoke_steer, rudder, throttle, -998, -998])  # Control inputs: [yoke_pull, yoke_steer, rudder, throttle]
 
     def conditionChecks(self):
@@ -482,10 +488,9 @@ class AircraftLandingModel(pyactr.ACTRModel):
            and self.dictionaryAccess(self.globalVariables,["destinations","airspeed"]) < 2 
            and self.dictionaryAccess(self.globalVariables,["destinations","brakes"]) == 1):  
             self.inProgress = False
-    
+
     def getSimulationStatus(self):
         return self.inProgress
-        
 
     # Update the model's DM based on X-Plane data
     def update_aircraft_state(self):
