@@ -39,10 +39,8 @@ class sandbox:
     print("next test -- revisit old instance: should see borf and 50")
     print(oldParams.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
     print(oldParams.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
-
-
-
-
+    print("next test -- Other subdictionaries")
+    print(oldParams.dictionaryAccess(["aircraft_state",listAccess.NAME.value],listAccess.CURRENT.value,permissions.READ.value))
 
 
     # p1.globalVariables.
