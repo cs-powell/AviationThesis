@@ -7,10 +7,10 @@ import math
 from geographiclib.geodesic import Geodesic as geo
 from rich import print
 from sandbox import sandbox as sb
-from modelParameters import params as params
+from modelParameters import params
 # import scaleFactor as sf
 # Initialize XPlaneConnect client
-
+from modelParameters import listAccess
 
 ### Define variables/parameters for aircraft class/category : Wisdom of Raju 
 class AircraftLandingModel(pyactr.ACTRModel):
@@ -18,6 +18,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
     def __init__(self,client,printFlag):
         super().__init__()
         self.client = client
+        self.parameters = params()
         self.inProgress = True
         self.printControlsFlag = printFlag
         self.targetLat = 39.895791
@@ -161,17 +162,17 @@ class AircraftLandingModel(pyactr.ACTRModel):
         #     self.variableAtlas[0] = [self.sources[idx],self.destinations[idx],self.targets[idx]]
         #     idx += 1
 
-    def dictionaryAccess(self,dictionary,keys):
-        # print("dictionary access for: " + str(key))
-        nestedDictionary = dictionary
-        for key in keys:
-            result = nestedDictionary[key]
-            nestedDictionary = result
+    # def dictionaryAccess(self,dictionary,keys):
+    #     # print("dictionary access for: " + str(key))
+    #     nestedDictionary = dictionary
+    #     for key in keys:
+    #         result = nestedDictionary[key]
+    #         nestedDictionary = result
         
-        if isinstance(result, tuple):
-            return result[0]
-        else: 
-            return result
+    #     if isinstance(result, tuple):
+    #         return result[0]
+    #     else: 
+    #         return result
 
     
     def reassignClient(self,newClient):
@@ -290,6 +291,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Update all controls at the same time by calculating control values for each parameter.
         """
+        # self.parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT)
         delta_yoke_pull   = self.proportionalIntegralControl()
         delta_yoke_steer  = self.proportionalIntegralControl()
         delta_rudder      = self.proportionalIntegralControl()
