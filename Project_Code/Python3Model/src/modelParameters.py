@@ -1,3 +1,6 @@
+from enum import Enum
+
+
 class params:
     
     def __init__(self):
@@ -14,32 +17,33 @@ class params:
         #             "wheelSpeed"        : "sim/flightmodel2/gear/tire_rotation_speed_rad_sec",
         #             "wheelWeight"       : "sim/flightmodel/parts/tire_vrt_def_veh"
         #         }
-    
+        
+        class listAccess(Enum):
+            DREF = 0
+            TARGET = 1
+            PREVIOUS = 2
+            CURRENT = 3
+            PHASE = 0
+
 
         self.globalVariables = {
             "aircraft_state" : {
-                "airspeed"          : ("sim/cockpit2/gauges/indicators/airspeed_kts_pilot",self.target_airspeed, self.airspeed),
-                "roll"              : ("sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",self.target_roll,self.roll),
-                "heading"           : ("sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",self.target_heading,self.heading),
-                "latitude"          : ("sim/flightmodel/position/latitude",self.target_Lat,self.latitude),
-                "longitude"         : ("sim/flightmodel/position/longitude",self.target_Long,self.longitude),
-                "vertical speed"    : ("sim/flightmodel/position/vh_ind_fpm", self.target_descent_rate,self.descent_rate),
-                "altitude"          : ("sim/flightmodel/position/y_agl",self.target_altitude,self.altitude),
-                "pitch"             : ("sim/flightmodel/position/true_theta",self.target_pitch,self.pitch),
-                "brakes"            : ("sim/cockpit2/controls/parking_brake_ratio",None,self.brakes),
-                "wheelSpeed"        : ("sim/flightmodel2/gear/tire_rotation_speed_rad_sec",None,self.wheelSpeed),
-                "wheelWeight"       : ("sim/flightmodel/parts/tire_vrt_def_veh",None,self.wheelWeight)
+                "airspeed"          : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",0, 0,0],
+                "roll"              : ["sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",0,0,0],
+                "heading"           : ["sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",0,0,0], # Previous Heading
+                "latitude"          : ["sim/flightmodel/position/latitude",0,0,0],
+                "longitude"         : ["sim/flightmodel/position/longitude",0,0,0],
+                "vertical speed"    : ["sim/flightmodel/position/vh_ind_fpm",0,0,0], # Previous Descent Rate
+                "altitude"          : ["sim/flightmodel/position/y_agl",0,0,0],
+                "pitch"             : ["sim/flightmodel/position/true_theta",0,0,0],
+                "brakes"            : ["sim/cockpit2/controls/parking_brake_ratio",0,0,0],
+                "wheelSpeed"        : ["sim/flightmodel2/gear/tire_rotation_speed_rad_sec",0,0,0],
+                "wheelWeight"       : ["sim/flightmodel/parts/tire_vrt_def_veh",0,0,0]
             },
             "phaseFlags" : {
-                "descent"           : True,
-                "flare"             : False,
-                "roll out"          : False
-            },
-            "previousValues" : {
-                "previous_airspeed"             : 0,
-                "previous_roll"                 : 0,
-                "self.previous_heading"         : 0,
-                "self.previous_descent_rate"    : 0
+                "descent"           : [True],
+                "flare"             : [False],
+                "roll out"          : [False]
             },
             "integralValues" : {
                 "Kp" : 0.1, # Proportional gain
@@ -71,6 +75,19 @@ class params:
             #     "Ki" : self.Ki # Integral gain  
             # }
         }
+
+
+        def dictionaryAccess(self,dictionary,keys):
+            # print("dictionary access for: " + str(key))
+            nestedDictionary = dictionary
+            for key in keys:
+                result = nestedDictionary[key]
+                nestedDictionary = result
+            
+            if isinstance(result, tuple):
+                return result[0]
+            else: 
+                return result
 
 
 

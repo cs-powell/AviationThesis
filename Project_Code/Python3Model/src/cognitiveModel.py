@@ -146,45 +146,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.Ki = 0.01                
         # self.Ki = 2  # Integral gain
 
-        self.globalVariables = {
-            "destinations" : {
-                "airspeed" : self.airspeed,
-                "roll" : self.roll,
-                "heading" : self.heading,
-                "latitude": self.latitude,
-                "longitude": self.longitude,
-                "vertical speed" : self.descent_rate,
-                "altitude": self.altitude,
-                "pitch" : self.pitch,
-                "brakes": self.brakes,
-                "wheelSpeed": self.wheelSpeed,
-                "wheelWeight": self.wheelWeight
-            },
-            "targetValues" : {
-                "target_airspeed"       : self.target_airspeed,
-                "target_roll"           : self.target_roll,
-                "target_Lat"            :  self.target_Lat,
-                "target_Long"           : self.target_Long,
-                "target_descent_rate"   : self.target_descent_rate,
-                "target_altitude"       :  self.target_altitude,
-                "target_pitch"          : self.target_pitch
-            },
-            "phaseFlags" : {
-                "descent"   : self.descent,
-                "flare"     : self.flare,
-                "roll out"  : self.rollOut
-            },
-            "previousValues" : {
-                "previous_airspeed"             : self.previous_airspeed,
-                "previous_roll"                 : self.previous_roll,
-                "self.previous_heading"         : self.previous_heading,
-                "self.previous_descent_rate"    : self.previous_descent_rate
-            },
-            "integralValues" : {
-                "Kp" : self.Kp, # Proportional gain
-                "Ki" : self.Ki # Integral gain  
-            }
-        }
+        
 
        
 
@@ -222,7 +184,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
     def getAndLoadDREFS(self):
         results = self.client.getDREFs(self.sources.values())
-        
         idx = 0
         for key in self.sources:
             self.globalVariables["destinations",key] = results[idx]
@@ -319,29 +280,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         
 
 
-    def proportionalIntegralControl(self,print,k, delta_theta, k_i,theta,delta_t):
-        #  target, integral_error,scalingFactor
-        """
-        Proportional-Integral control rule implementation for multiple parameters.
-        """
-        # Calculate the error (current - target)
-        # error = target - current
-        # # error = current - target
-        # # print("Error: " +  str(error))
-        # # Update the integral of the error
-        # integral_error += error
-        # # print("Integral_error: " +  str(integral_error))
-
-        # # Calculate the control value using the PI formula
-        # control_value = (self.Kp * error) + (self.Ki * integral_error)
-
-        # ###Transformations:
-        # #Simple Sigmoid:
-        # control_value = (2 / (1 + math.exp(-(control_value/scalingFactor)))) - 1 ## Come back to this 11-7
-
-        # self.printVariables(print,target,current,error,(self.Kp * error),(self.Ki * integral_error))
-        # return control_value, integral_error  # Return control value and updated integral error
-
+    def proportionalIntegralControl(self,k, delta_theta, k_i,theta,delta_t): # Edited to match Embry Riddle Equations
         delta_control = k*delta_theta + k_i*theta*delta_t 
         return delta_control
         
@@ -351,10 +290,28 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Update all controls at the same time by calculating control values for each parameter.
         """
+        delta_yoke_pull   = self.proportionalIntegralControl()
+        delta_yoke_steer  = self.proportionalIntegralControl()
+        delta_rudder      = self.proportionalIntegralControl()
+        throttle = 0.2
+
+        yoke_pull = yoke_pull + delta_yoke_pull
+        delta_yoke_steer = yoke_steer + delta_yoke_steer
+        rudder = rudder + delta_rudder
+        
+        self.send_controls_to_xplane(yoke_pull, yoke_steer+additive, rudder, throttle)
+
+
+## Pitch at Time, Pitch at Last Cycle, Target Pitch
+## Target Pitch - Pitch at Last Cycle = Theta
+## Target Pitch - Pitch at Time = CurrTheta
+## Theta - CurrTheta = Delta Theta
+
+
         # print("In update controls")
         # print("Entered Update Controls Simultaneously")
         # Compute control values for all parameters (yoke pull, yoke steer, rudder, throttle)
-        if(self.dictionaryAccess(self.phaseFlags,"flare")): 
+        if(self.dictionaryAccess(self.phaseFlags,"flare")):  
              yoke_pull, self.integral_airspeed = self.proportionalIntegralControl(1,self.dictionaryAccess(self.destinations,"pitch"), 
                                                                              self.target_pitch, 
                                                                              self.integral_pitch, 
