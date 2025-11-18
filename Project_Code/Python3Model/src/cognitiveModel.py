@@ -1,4 +1,3 @@
-from Project_Code.Python3Model.src.scaleFactor import scaleFactor
 import pyactr
 # from XPlaneConnect import *
 import xpc
@@ -437,26 +436,29 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
         self.client.sendCTRL([yoke_pull, yoke_steer, rudder, throttle, -998, -998])  # Control inputs: [yoke_pull, yoke_steer, rudder, throttle]
 
-    def conditionChecks(self):
-        if(self.dictionaryAccess(self.globalVariables,["destinations","wheelWeight"]) > 0.01 
-           and self.dictionaryAccess(self.globalVariables,["destinations","wheelSpeed"]) > 1):
-            #Two Parameters to Confirm Touchdown and wheel contact
-            # "sim/flightmodel/parts/tire_vrt_def_veh" #Gear Strut Deflection (Weight on wheels)
-            # "sim/flightmodel2/gear/tire_rotation_rate_rad_sec" #Tire Rotation Rate
-            self.phaseFlags["roll out"] = True
-            # print("Hit the brakes")
+    # def conditionChecks(self):
+    #     if(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelWeight"],listAccess.CURRENT,permissions.READ) > 0.01
+    #        and self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelSpeed"],listAccess.CURRENT,permissions.READ) > 1):
+    #         #Two Parameters to Confirm Touchdown and wheel contact
+    #         # "sim/flightmodel/parts/tire_vrt_def_veh" #Gear Strut Deflection (Weight on wheels)
+    #         # "sim/flightmodel2/gear/tire_rotation_rate_rad_sec" #Tire Rotation Rate
+    #         self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.ROLLOUT],listAccess.PHASE_FLAG,permissions.WRITE,True)
+    #         # self.phaseFlags["roll out"] = True
+    #         # print("Hit the brakes")
 
-        if (self.dictionaryAccess(self.globalVariables,["destinations","altitude"]) <= 20 
-            and self.dictionaryAccess((self.globalVariables,["phaseFlags","flare"]) == False)): 
-            self.phaseFlags["flare"] = True
-            self.Ki = 0.01  ## Increase Control Authority to compensate for decreasing airspeed
-            print("Altitude < 500; Flare Set True")
+    #     if (self.dictionaryAccess(self.globalVariables,["destinations","altitude"]) <= 20 
+    #         and self.dictionaryAccess((self.globalVariables,["phaseFlags","flare"]) == False)): 
+    #         # self.phaseFlags["flare"] = True
+    #         self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.FLARE],listAccess.PHASE_FLAG,permissions.WRITE,True)
 
-        if(self.dictionaryAccess(self.globalVariables,["destinations","wheelWeight"]) > 0.01 
-           and self.dictionaryAccess(self.globalVariables,["destinations","wheelSpeed"]) < 1 
-           and self.dictionaryAccess(self.globalVariables,["destinations","airspeed"]) < 2 
-           and self.dictionaryAccess(self.globalVariables,["destinations","brakes"]) == 1):  
-            self.inProgress = False
+    #         # self.Ki = 0.01  ## Increase Control Authority to compensate for decreasing airspeed
+    #         print("Altitude < 500; Flare Set True")
+
+    #     if(self.dictionaryAccess(self.globalVariables,["destinations","wheelWeight"]) > 0.01 
+    #        and self.dictionaryAccess(self.globalVariables,["destinations","wheelSpeed"]) < 1 
+    #        and self.dictionaryAccess(self.globalVariables,["destinations","airspeed"]) < 2 
+    #        and self.dictionaryAccess(self.globalVariables,["destinations","brakes"]) == 1):  
+    #         self.inProgress = False
 
     def getSimulationStatus(self):
         return self.inProgress
@@ -467,6 +469,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
         Faster Method
         """
         self.getAndLoadDREFS()
-        self.conditionChecks()
+        # self.conditionChecks()
 
     # def logData(self):
