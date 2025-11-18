@@ -21,8 +21,8 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.parameters = params()
         self.inProgress = True
         self.printControlsFlag = printFlag
-        self.targetLat = 39.895791
-        self.targetLong = -104.696032
+        # self.targetLat = 39.895791
+        # self.targetLong = -104.696032
 
         """
         Setting DREF variables and loading into drefs array
@@ -57,31 +57,31 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Initialization of destination Variables and loading into destinations array
         """
-        airspeed        = self.client.getDREF("sim/cockpit2/gauges/indicators/airspeed_kts_pilot")
-        roll            = self.client.getDREF("sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot")
-        heading         = self.client.getDREF("sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot")
-        latitude        = self.client.getDREF("sim/flightmodel/position/latitude") ##Current Lat 
-        longitude       = self.client.getDREF("sim/flightmodel/position/longitude") ##Current Long
-        descent_rate    = self.client.getDREF("sim/flightmodel/position/vh_ind_fpm")
-        altitude        = self.client.getDREF("sim/flightmodel/position/y_agl")
-        pitch           = self.client.getDREF("sim/flightmodel/position/true_theta")
-        brake           = self.client.getDREF("sim/cockpit2/controls/parking_brake_ratio")
-        wheelS          = self.client.getDREF("sim/flightmodel2/gear/tire_rotation_speed_rad_sec")
-        wheelW          = self.client.getDREF("sim/flightmodel/parts/tire_vrt_def_veh")
+        # airspeed        = self.client.getDREF("sim/cockpit2/gauges/indicators/airspeed_kts_pilot")
+        # roll            = self.client.getDREF("sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot")
+        # heading         = self.client.getDREF("sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot")
+        # latitude        = self.client.getDREF("sim/flightmodel/position/latitude") ##Current Lat 
+        # longitude       = self.client.getDREF("sim/flightmodel/position/longitude") ##Current Long
+        # descent_rate    = self.client.getDREF("sim/flightmodel/position/vh_ind_fpm")
+        # altitude        = self.client.getDREF("sim/flightmodel/position/y_agl")
+        # pitch           = self.client.getDREF("sim/flightmodel/position/true_theta")
+        # brake           = self.client.getDREF("sim/cockpit2/controls/parking_brake_ratio")
+        # wheelS          = self.client.getDREF("sim/flightmodel2/gear/tire_rotation_speed_rad_sec")
+        # wheelW          = self.client.getDREF("sim/flightmodel/parts/tire_vrt_def_veh")
 
-        HARDCODE_HEADING = 179
+        # HARDCODE_HEADING = 179
         
-        self.airspeed = airspeed[0]
-        self.roll = roll[0]
-        self.heading = HARDCODE_HEADING
-        self.latitude = latitude[0]
-        self.longitude = longitude[0]
-        self.descent_rate = descent_rate[0]
-        self.altitude = altitude[0]
-        self.pitch = pitch[0]
-        self.brakes = brake[0]
-        self.wheelSpeed = wheelS[0]
-        self.wheelWeight = wheelW[0]        
+        # self.airspeed = airspeed[0]
+        # self.roll = roll[0]
+        # self.heading = HARDCODE_HEADING
+        # self.latitude = latitude[0]
+        # self.longitude = longitude[0]
+        # self.descent_rate = descent_rate[0]
+        # self.altitude = altitude[0]
+        # self.pitch = pitch[0]
+        # self.brakes = brake[0]
+        # self.wheelSpeed = wheelS[0]
+        # self.wheelWeight = wheelW[0]        
         # self.destinations = [self.airspeed,self.roll,self.heading,self.descent_rate,self.altitude,self.pitch,self.brakes,self.wheelSpeed,self.wheelWeight]
         
         # self.destinations = {
@@ -101,20 +101,20 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Initial Initialization of target Values
         """
-        self.target_airspeed = 80
-        self.target_roll = 0
-        self.target_heading = self.heading #Track heading from initialization[DEPRECATED]
-        self.target_Lat = 39.895791
-        self.target_Long = -104.696032
-        self.target_descent_rate = 500
-        self.target_altitude = -998
-        self.target_pitch = 25
-        self.targets = [self.target_airspeed,self.target_roll,self.target_heading,self.target_Lat,self.target_Long,self.target_descent_rate,self.target_altitude,self.target_pitch]
+        # self.target_airspeed = 80
+        # self.target_roll = 0
+        # self.target_heading = self.heading #Track heading from initialization[DEPRECATED]
+        # self.target_Lat = 39.895791
+        # self.target_Long = -104.696032
+        # self.target_descent_rate = 500
+        # self.target_altitude = -998
+        # self.target_pitch = 25
+        # self.targets = [self.target_airspeed,self.target_roll,self.target_heading,self.target_Lat,self.target_Long,self.target_descent_rate,self.target_altitude,self.target_pitch]
 
         #State Flags (Boolean)  & Current State (Integer)
-        self.descent = False
-        self.flare = False
-        self.rollOut = False
+        # self.descent = False
+        # self.flare = False
+        # self.rollOut = False
 
         # self.currentState = 0
         # self.stateFlags = [self.descent,self.flare,self.rollOut]
@@ -125,26 +125,26 @@ class AircraftLandingModel(pyactr.ACTRModel):
         # }
 
         # Declare the state for previous values
-        self.previous_airspeed = None
-        self.previous_roll = None
-        self.previous_heading = None
-        self.previous_descent_rate = None
+        # self.previous_airspeed = None
+        # self.previous_roll = None
+        # self.previous_heading = None
+        # self.previous_descent_rate = None
 
         # Initialize the integral errors for each parameter
-        self.integral_airspeed = 0
-        self.integral_roll = 0
-        self.integral_heading = 0
-        self.integral_Latitude = 0
-        self.integral_Longitude = 0
-        self.integral_descent_rate = 0
+        # self.integral_airspeed = 0
+        # self.integral_roll = 0
+        # self.integral_heading = 0
+        # self.integral_Latitude = 0
+        # self.integral_Longitude = 0
+        # self.integral_descent_rate = 0
 
 
         #Flare Specific Parameters
-        self.integral_pitch = 0 
+        # self.integral_pitch = 0 
 
         # Integral gains (tune these values for performance)
-        self.Kp = 0.1  
-        self.Ki = 0.01                
+        # self.Kp = 0.1  
+        # self.Ki = 0.01                
         # self.Ki = 2  # Integral gain
 
         
@@ -283,20 +283,35 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Update all controls at the same time by calculating control values for each parameter.
         """
+        [yoke_pull, yoke_steer, rudder, ignore0, ignore1, ignore2,ignore3] = self.client.getCTRL(0)
         # self.parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT)
-        delta_yoke_pull   = self.proportionalIntegralControl(
+        delta_yoke_pull = self.proportionalIntegralControl(
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE,permissions.READ)
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.THETA,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING,permissions.READ)
             )
-        delta_yoke_steer  = self.proportionalIntegralControl()
-        delta_rudder      = self.proportionalIntegralControl()
+        delta_yoke_steer = self.proportionalIntegralControl(
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.DELTA_THETA,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.THETA,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING,permissions.READ)
+        )
+        delta_rudder   = self.proportionalIntegralControl(
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.DELTA_THETA,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.THETA,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING,permissions.READ)
+        )
         throttle = 0.2
-
-        yoke_pull = yoke_pull + delta_yoke_pull
-        delta_yoke_steer = yoke_steer + delta_yoke_steer
-        rudder = rudder + delta_rudder
+        new_yoke_pull =  + delta_yoke_pull
+        new_yoke_steer = yoke_steer + delta_yoke_steer
+        new_rudder = rudder + delta_rudder
         
-        self.send_controls_to_xplane(yoke_pull, yoke_steer+additive, rudder, throttle)
+        self.send_controls_to_xplane(new_yoke_pull, new_yoke_steer,  new_rudder, throttle)
 
 
 ## Pitch at Time, Pitch at Last Cycle, Target Pitch
@@ -398,27 +413,27 @@ class AircraftLandingModel(pyactr.ACTRModel):
         # print("Yoke Pull:" + str(yoke_pull))
 
         #Set the Trim to a value that allows the aircraft to osscilate around the target airspeed
-        if (self.dictionaryAccess(self.phaseFlags,"flare") == False):
-            trimdref = "sim/flightmodel/controls/elv_trim"
-            trim = -0.3
-            self.client.sendDREF(trimdref,trim)
+        # if (self.dictionaryAccess(self.phaseFlags,"flare") == False):
+        #     trimdref = "sim/flightmodel/controls/elv_trim"
+        #     trim = -0.3
+        #     self.client.sendDREF(trimdref,trim)
 
-        if(self.dictionaryAccess(self.phaseFlags,"flare")):
-            trimdref = "sim/flightmodel/controls/elv_trim"
-            trim = 0
-            self.client.sendDREF(trimdref,trim)
+        # if(self.dictionaryAccess(self.phaseFlags,"flare")):
+        #     trimdref = "sim/flightmodel/controls/elv_trim"
+        #     trim = 0
+        #     self.client.sendDREF(trimdref,trim)
 
-        if(self.dictionaryAccess(self.phaseFlags,"roll out")):
-            #Cut the Throttle
-            throttle = 0
+        # if(self.dictionaryAccess(self.phaseFlags,"roll out")):
+        #     #Cut the Throttle
+        #     throttle = 0
 
-            #Release Yoke Back Pressure (Pitch Up Pressure from the flare maneuver)
-            yoke_pull = 0
+        #     #Release Yoke Back Pressure (Pitch Up Pressure from the flare maneuver)
+        #     yoke_pull = 0
 
-            #Hit the Brakes
-            brakedref = "sim/cockpit2/controls/parking_brake_ratio"
-            brake = 1
-            self.client.sendDREF(brakedref,brake)
+        #     #Hit the Brakes
+        #     brakedref = "sim/cockpit2/controls/parking_brake_ratio"
+        #     brake = 1
+        #     self.client.sendDREF(brakedref,brake)
 
         self.client.sendCTRL([yoke_pull, yoke_steer, rudder, throttle, -998, -998])  # Control inputs: [yoke_pull, yoke_steer, rudder, throttle]
 
