@@ -49,7 +49,14 @@ class params:
         for item in values:
             drefList.append(item[listAccess.DREF.value])
         return drefList
-
+    
+    def getModelKeys(self):
+        dictionary :dict = self.globalParameters[parameterType.AIRCRAFT_STATE]
+        keys = dictionary.items()
+        keyList = []
+        for item in keys:
+            keyList.append(item[0])
+        return keyList
         
 class listAccess(Enum):
     DREF = 0

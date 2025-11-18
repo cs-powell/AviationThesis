@@ -8,7 +8,8 @@ from modelParameters import permissions
 # if __name__ == "__main__":
 class sandbox: 
     parameters = params()
-    print(parameters.getModelDREFS())
+    # print(parameters.getModelDREFS())
+    print(parameters.getModelKeys())
 
     p1 = params()
 
