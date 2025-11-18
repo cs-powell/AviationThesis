@@ -8,7 +8,10 @@ from modelParameters import permissions
 # if __name__ == "__main__":
 class sandbox: 
     parameters = params()
+    print(parameters.getModelDREFS())
+
     p1 = params()
+
     # print(p1.a)
     p1.a = 21
     # print(p1.a)
@@ -19,30 +22,28 @@ class sandbox:
     # print(p1.b)
     # print(p2.b)
 
-    print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
-    parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.WRITE.value,"borf")
-    print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
-    print("new test")
-    print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
-    parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.WRITE.value,1)
-    print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
-    parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.WRITE.value,10)
-    print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
-    parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.WRITE.value,50)
-    print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
-    oldParams = parameters
-    print("next test -- new instance")
-    parameters = params()
-    print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
-    print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
+    # print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
+    # parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.WRITE.value,"borf")
+    # print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
+    # print("new test")
+    # print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
+    # parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.WRITE.value,1)
+    # print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
+    # parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.WRITE.value,10)
+    # print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
+    # parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.WRITE.value,50)
+    # print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
+    # oldParams = parameters
+    # print("next test -- new instance")
+    # parameters = params()
+    # print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
+    # print(parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
 
-    print("next test -- revisit old instance: should see borf and 50")
-    print(oldParams.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
-    print(oldParams.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
-    print("next test -- Other subdictionaries")
-    print(oldParams.dictionaryAccess(["aircraft_state",listAccess.NAME.value],listAccess.CURRENT.value,permissions.READ.value))
-
-
+    # print("next test -- revisit old instance: should see borf and 50")
+    # print(oldParams.dictionaryAccess(["aircraft_state","airspeed"],listAccess.DREF.value,permissions.READ.value))
+    # print(oldParams.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT.value,permissions.READ.value))
+    # print("next test -- Other subdictionaries")
+    # # print(oldParams.dictionaryAccess(["aircraft_state",listAccess.NAME.value],listAccess.CURRENT.value,permissions.READ.value))
     # p1.globalVariables.
 
 

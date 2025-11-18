@@ -1,12 +1,11 @@
 from enum import Enum
 
 class params:
-
     def __init__(self):
-        self.globalVariables = {
-            "aircraft_state" : {
-                "airspeed"     : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",0, 0,0],
-                listAccess.NAME.value     : ["sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",0,0,45],
+        self.globalParameters = {
+            parameterType.AIRCRAFT_STATE : {
+                "airspeed"          : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",0, 0,0],
+                "roll"              : ["sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",0,0,0],
                 "heading"           : ["sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",0,0,0], # Previous Heading
                 "latitude"          : ["sim/flightmodel/position/latitude",0,0,0],
                 "longitude"         : ["sim/flightmodel/position/longitude",0,0,0],
@@ -17,20 +16,20 @@ class params:
                 "wheelSpeed"        : ["sim/flightmodel2/gear/tire_rotation_speed_rad_sec",0,0,0],
                 "wheelWeight"       : ["sim/flightmodel/parts/tire_vrt_def_veh",0,0,0]
             },
-            "phaseFlags" : {
-                "descent"           : [True],
-                "flare"             : [False],
-                "roll out"          : [False]
+            parameterType.PHASE_FLAGS : {
+                flightPhase.DESCENT         : [True],
+                flightPhase.FLARE           : [False],
+                flightPhase.ROLLOUT         : [False]
             },
-            "integralValues" : {
-                "Kp" : [0.1], # Proportional gain
-                "Ki" : [0.01]  # Integral gain  
-            }  
+            parameterType.INTEGRAL_VALUES : {
+                integralValues.K : [integralValues.K.value], # Proportional gain
+                integralValues.Ki : [integralValues.Ki.value]  # Integral gain  
+            }
         }
 
     def dictionaryAccess(self,keys,accessItem,permissionFlag,inputValue=None):
         # print("dictionary access for: " + str(key))
-        nestedDictionary = self.globalVariables
+        nestedDictionary = self.globalParameters
         for key in keys:
             result = nestedDictionary[key]
             nestedDictionary = result
@@ -42,14 +41,38 @@ class params:
                 return result[accessItem]
             else: 
                 return result
+            
+    def getModelDREFS(self):
+        dictionary :dict = self.globalParameters[parameterType.AIRCRAFT_STATE]
+        values = dictionary.values()
+        drefList = []
+        for item in values:
+            drefList.append(item[listAccess.DREF.value])
+        return drefList
+
         
 class listAccess(Enum):
     DREF = 0
     TARGET = 1
     PREVIOUS = 2
     CURRENT = 3
-    PHASE = 0
-    NAME = "borf"
+    PHASE_FLAG = 0
+    INTEGRAL_VALUE = 0
+
+class parameterType(Enum):
+    AIRCRAFT_STATE = "aircraft_state"
+    PHASE_FLAGS = "phase_flags"
+    INTEGRAL_VALUES = "integral_values"
+
+
+class flightPhase(Enum):
+    DESCENT =   "descent"
+    FLARE   =   "flare"
+    ROLLOUT =   "rollout"
+
+class integralValues(Enum):
+    K = 35
+    Ki = 15
 
 class permissions(Enum):
     READ = 0

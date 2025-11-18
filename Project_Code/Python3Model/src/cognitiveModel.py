@@ -10,7 +10,7 @@ from sandbox import sandbox as sb
 from modelParameters import params
 # import scaleFactor as sf
 # Initialize XPlaneConnect client
-from modelParameters import listAccess
+from modelParameters import *
 
 ### Define variables/parameters for aircraft class/category : Wisdom of Raju 
 class AircraftLandingModel(pyactr.ACTRModel):
@@ -178,9 +178,9 @@ class AircraftLandingModel(pyactr.ACTRModel):
     def reassignClient(self,newClient):
         self.client = newClient
 
-    def get_bearing(self,lat1, lat2, long1, long2):
+    def get_bearing(self,lat1, lat2, long1, long2): 
         brng = geo.WGS84.Inverse(lat1, long1, lat2, long2)['azi1']
-        self.target_heading = brng
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.TARGET,permissions.WRITE,brng)
         # print("TARGET BEARING: " + str(brng))
 
     def getAndLoadDREFS(self):
@@ -193,7 +193,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
         lat  = self.client.getDREF("sim/flightmodel/position/latitude") ##Current Lat 
         long = self.client.getDREF("sim/flightmodel/position/longitude") ##Current Long
         self.get_bearing(lat[0],self.targetLat,long[0],self.targetLong)
-        
 
         # print("getDrefs: " + str(results[1][0]))
         # print("current destination: " + str(self.destinations["airspeed"]))
@@ -206,7 +205,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
         #         print("current destination: " + str(self.destinations[idx]))
         #         print("current main Airspeed: " + str(self.airspeed))
         #     idx += 1
-        
 
     def printControls(self,calculated,errors,yokePull,yokeSteer,rudder,throttle):
         # print("In print controls")
