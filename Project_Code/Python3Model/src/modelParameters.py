@@ -35,7 +35,7 @@ class params:
             }
         }
 
-    def dictionaryAccess(self,keys,accessItem,permissionFlag,inputValue=None):
+    def dictionaryAccess(self,keys,accessItem:Enum,permissionFlag,inputValue=None):
         nestedDictionary = self.globalParameters
         for key in keys:
             result = nestedDictionary[key]
@@ -55,7 +55,7 @@ class params:
                     result[listAccess.THETA] = result[listAccess.TARGET] - inputValue
         else:
             if isinstance(result, list):
-                return result[accessItem]
+                return result[accessItem.value]
             else: 
                 return result
             

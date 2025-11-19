@@ -1,3 +1,4 @@
+import sys
 import pyactr
 # from XPlaneConnect import *
 import xpc
@@ -187,7 +188,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         results = self.client.getDREFs(sources)
         # idx = 0
         keyValueResults = zip(keys,results)
-        print(keyValueResults)
+        # print(keyValueResults)
         for key,value in keyValueResults:
             # self.globalVariables["destinations",key] = results[idx]
             self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,key],listAccess.CURRENT,permissions.WRITE,value)
@@ -282,8 +283,14 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Update all controls at the same time by calculating control values for each parameter.
         """
-        [yoke_pull, yoke_steer, rudder, ignore0, ignore1, ignore2,ignore3] = self.client.getCTRL(0)
+        # [yoke_pull, yoke_steer, rudder, ignore0, ignore1, ignore2,ignore3] = self.client.getCTRL(0)
         # self.parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT)
+        # try:
+        #     print(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA.value,permissions.READ.value))
+        # except Exception as e:
+        #     print(e)
+        #     sys.exit()
+
         delta_yoke_pull = self.proportionalIntegralControl(
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE,permissions.READ),
             self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA,permissions.READ),
@@ -306,10 +313,13 @@ class AircraftLandingModel(pyactr.ACTRModel):
             self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING,permissions.READ)
         )
         throttle = 0.2
-        new_yoke_pull =  + delta_yoke_pull
-        new_yoke_steer = yoke_steer + delta_yoke_steer
-        new_rudder = rudder + delta_rudder
+        new_yoke_pull =  self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE,permissions.READ) + delta_yoke_pull
+        new_yoke_steer = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE,permissions.READ) + delta_yoke_steer
+        new_rudder = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE,permissions.READ) + delta_rudder
         
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE,permissions.WRITE,new_yoke_pull)
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE,permissions.WRITE,new_yoke_steer)
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE,permissions.WRITE,new_rudder)
         self.send_controls_to_xplane(new_yoke_pull, new_yoke_steer,  new_rudder, throttle)
 
 
@@ -425,7 +435,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
         # if(self.dictionaryAccess(self.phaseFlags,"roll out")):
         #     #Cut the Throttle
         #     throttle = 0
-
         #     #Release Yoke Back Pressure (Pitch Up Pressure from the flare maneuver)
         #     yoke_pull = 0
 
@@ -433,7 +442,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
         #     brakedref = "sim/cockpit2/controls/parking_brake_ratio"
         #     brake = 1
         #     self.client.sendDREF(brakedref,brake)
-
         self.client.sendCTRL([yoke_pull, yoke_steer, rudder, throttle, -998, -998])  # Control inputs: [yoke_pull, yoke_steer, rudder, throttle]
 
     # def conditionChecks(self):

@@ -256,11 +256,11 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
                 elapsed =   endTime - startTime
                 while(experimentInProgress and (not stop_event.is_set())):
                     
-                    print(stop_event.is_set())
+                    # print(stop_event.is_set())
                     elapsed = endTime - startTime
                     if(elapsed > currentDelay):
                         cogModel.update_aircraft_state() 
-                        cogModel.update_controls_simultaneously()
+                        # cogModel.update_controls_simultaneously()
                         # client.pauseSim(False)          #Unpause Simulator
                         startTime = time.time()
                     # sleep(2)                     # Let Simulator Run 50 Milliseconds
@@ -274,8 +274,6 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
             "Time Elapsed: -----> {c} ".format(a= startTime, b=endTime,c=timeElapsed)
             specialPrint(message,False,messageType.ERROR)
             continue
-
-
 
     """
     Parse End Condition outside of experiment loop: Succesful Run or Timeout-Induced End
