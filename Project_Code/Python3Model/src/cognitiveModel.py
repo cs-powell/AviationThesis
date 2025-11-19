@@ -183,22 +183,25 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.TARGET,permissions.WRITE,brng)
 
     def getAndLoadDREFS(self):
-        sources = self.parameters.getModelDREFS()
-        keys =  self.parameters.getModelKeys()
-        results = self.client.getDREFs(sources)
-        # idx = 0
-        keyValueResults = zip(keys,results)
-        # print(keyValueResults)
-        for key,value in keyValueResults:
-            # self.globalVariables["destinations",key] = results[idx]
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,key],listAccess.CURRENT,permissions.WRITE,value)
-            # idx+=1
-        #Update Target Heading
-        lat  = keyValueResults["latitide"] 
-        long = keyValueResults["longitude"]
-        targetLatitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.TARGET,permissions.READ)
-        targetLongitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.TARGET,permissions.READ)
-        self.get_bearing(lat,targetLatitude,long,targetLongitude)
+        try:
+            sources = self.parameters.getModelDREFS()
+            keys =  self.parameters.getModelKeys()
+            results = self.client.getDREFs(sources)
+            # idx = 0
+            keyValueResults = list(zip(keys,results))
+            # print(keyValueResults)
+            for key,value in keyValueResults:
+                # self.globalVariables["destinations",key] = results[idx]
+                self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,key],listAccess.CURRENT,permissions.WRITE,value)
+                # idx+=1
+            #Update Target Heading
+            lat  = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.CURRENT,permissions.READ)
+            long = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.CURRENT,permissions.READ)
+            targetLatitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.TARGET,permissions.READ)
+            targetLongitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.TARGET,permissions.READ)
+            self.get_bearing(lat,targetLatitude,long,targetLongitude)
+        except Exception as e:
+            print(e)
 
     # def printControls(self,calculated,errors,yokePull,yokeSteer,rudder,throttle):
     #     # print("In print controls")
@@ -320,6 +323,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE,permissions.WRITE,new_yoke_pull)
         self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE,permissions.WRITE,new_yoke_steer)
         self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE,permissions.WRITE,new_rudder)
+        print("Yoke:" + str(delta_yoke_pull))
         self.send_controls_to_xplane(new_yoke_pull, new_yoke_steer,  new_rudder, throttle)
 
 
