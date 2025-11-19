@@ -31,7 +31,7 @@ class params:
                 integralValues.Ki : [integralValues.Ki.value]  # Integral gain  
             },
             parameterType.TIMING: {
-                timeValues.DELTA_T: 0.015
+                timeValues.DELTA_T: 0.15
             }
         }
 
@@ -43,7 +43,7 @@ class params:
         if(permissionFlag == permissions.WRITE.value):
             if isinstance(result, list):
                 previous = result[accessItem]
-                print("LOOK:   " + str(previous))
+                # print("LOOK:   " + str(previous))
                 result[accessItem] = inputValue
                 ## If updating a current valu in aircraft state, 
                 # then update the previous now as well and recalculate the theta value and the delta from target
@@ -75,6 +75,31 @@ class params:
         for item in keys:
             keyList.append(item[0])
         return keyList
+    
+    def printParameter(self):
+        dictionary :dict = self.globalParameters.get(parameterType.AIRCRAFT_STATE)
+        keys = dictionary.items()
+        itemList = []
+        paramList = []
+        for item in keys:
+            itemList.append(item[0])
+            paramList.append(str(item[1][1:]))
+        
+
+        dictionary2 :dict = self.globalParameters.get(parameterType.AIRCRAFT_CONTROLS)
+        keys2 = dictionary2.items()
+        for item in keys2:
+            itemList.append(item[0].value)
+            paramList.append(str(item[1]))
+
+        header_row = "{:<20} {:>10}"
+        headers = "Parameter Current".split()
+        row = "{:<20} {:>10}"
+        print("\n" + header_row.format(*headers))
+        print("-" * 81)
+        for parameter, current in zip(itemList, paramList):
+            print(row.format(parameter,current))
+        # print(self.globalParameters[parameterType.AIRCRAFT_STATE]["airspeed"][listAccess.CURRENT])
         
 class listAccess(Enum):
     DREF = 0
