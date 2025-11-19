@@ -81,24 +81,33 @@ class params:
         keys = dictionary.items()
         itemList = []
         paramList = []
+        previousList = []
+        deltaThetaList = []
+        thetaList = []
+
         for item in keys:
             itemList.append(item[0])
-            paramList.append(str(item[1][1:]))
-        
+            paramList.append(str(item[1][listAccess.CURRENT.value]))
+            previousList.append(str(item[1][listAccess.PREVIOUS.value]))
+            deltaThetaList.append(str(item[1][listAccess.DELTA_THETA.value]))
+            thetaList.append(str(item[1][listAccess.THETA.value]))
 
         dictionary2 :dict = self.globalParameters.get(parameterType.AIRCRAFT_CONTROLS)
         keys2 = dictionary2.items()
         for item in keys2:
             itemList.append(item[0].value)
             paramList.append(str(item[1]))
+            previousList.append(0)
+            deltaThetaList.append(0)
+            thetaList.append(0)
 
-        header_row = "{:<20} {:>10}"
-        headers = "Parameter Current".split()
-        row = "{:<20} {:>10}"
+        header_row = "{:<20} {:<20} {:<20} {:<20} {:>10}"
+        headers = "Parameter Current Previous Delta_Theta Theta".split()
+        row = "{:<20} {:<20} {:<20} {:<20} {:>10}"
         print("\n" + header_row.format(*headers))
-        print("-" * 81)
-        for parameter, current in zip(itemList, paramList):
-            print(row.format(parameter,current))
+        print("-" * 101)
+        for parameter, current,previous,deltaTheta,theta in zip(itemList, paramList,previousList,deltaThetaList,thetaList):
+            print(row.format(parameter,current,previous,deltaTheta,theta))
         # print(self.globalParameters[parameterType.AIRCRAFT_STATE]["airspeed"][listAccess.CURRENT])
         
 class listAccess(Enum):
