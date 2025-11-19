@@ -189,17 +189,19 @@ class AircraftLandingModel(pyactr.ACTRModel):
             results = self.client.getDREFs(sources)
             # idx = 0
             keyValueResults = list(zip(keys,results))
-            # print(keyValueResults)
-            for key,value in keyValueResults:
-                # self.globalVariables["destinations",key] = results[idx]
-                self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,key],listAccess.CURRENT.value,permissions.WRITE.value,value)
+            print(keyValueResults)
+
+            # for (key,value) in keyValueResults:
+            #     # self.globalVariables["destinations",key] = results[idx]
+            #     print("Key: " + str(key))
+                # self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,key],listAccess.CURRENT.value,permissions.WRITE.value,value)
                 # idx+=1
             #Update Target Heading
-            lat  = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.CURRENT.value,permissions.READ)
-            long = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.CURRENT.value,permissions.READ)
-            targetLatitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.TARGET.value,permissions.READ)
-            targetLongitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.TARGET.value,permissions.READ)
-            self.get_bearing(lat,targetLatitude,long,targetLongitude)
+            # lat  = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.CURRENT.value,permissions.READ)
+            # long = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.CURRENT.value,permissions.READ)
+            # targetLatitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.TARGET.value,permissions.READ)
+            # targetLongitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.TARGET.value,permissions.READ)
+            # self.get_bearing(lat,targetLatitude,long,targetLongitude)
         except Exception as e:
             print(e)
             # print()
@@ -296,34 +298,34 @@ class AircraftLandingModel(pyactr.ACTRModel):
         #     sys.exit()
 
         delta_yoke_pull = self.proportionalIntegralControl(
-            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.THETA,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING,permissions.READ)
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING.value,permissions.READ)
             )
         delta_yoke_steer = self.proportionalIntegralControl(
-            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.DELTA_THETA,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.THETA,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING,permissions.READ)
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.DELTA_THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING.value,permissions.READ)
         )
         delta_rudder   = self.proportionalIntegralControl(
-            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.DELTA_THETA,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.THETA,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING,permissions.READ)
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.DELTA_THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING.value,permissions.READ)
         )
         throttle = 0.2
-        new_yoke_pull =  self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE,permissions.READ) + delta_yoke_pull
-        new_yoke_steer = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE,permissions.READ) + delta_yoke_steer
-        new_rudder = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE,permissions.READ) + delta_rudder
+        new_yoke_pull =  self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_yoke_pull
+        new_yoke_steer = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_yoke_steer
+        new_rudder = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_rudder
         
-        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE,permissions.WRITE,new_yoke_pull)
-        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE,permissions.WRITE,new_yoke_steer)
-        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE,permissions.WRITE,new_rudder)
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE.value,permissions.WRITE,new_yoke_pull)
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE.value,permissions.WRITE,new_yoke_steer)
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE.value,permissions.WRITE,new_rudder)
         print("Yoke:" + str(delta_yoke_pull))
         self.send_controls_to_xplane(new_yoke_pull, new_yoke_steer,  new_rudder, throttle)
 
