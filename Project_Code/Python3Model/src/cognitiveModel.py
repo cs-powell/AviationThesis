@@ -197,11 +197,11 @@ class AircraftLandingModel(pyactr.ACTRModel):
                 self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,key],listAccess.CURRENT.value,permissions.WRITE.value,value[0])
                 # idx+=1
             #Update Target Heading
-            # lat  = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.CURRENT.value,permissions.READ)
-            # long = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.CURRENT.value,permissions.READ)
-            # targetLatitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.TARGET.value,permissions.READ)
-            # targetLongitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.TARGET.value,permissions.READ)
-            # self.get_bearing(lat,targetLatitude,long,targetLongitude)
+            lat  = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.CURRENT.value,permissions.READ)
+            long = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.CURRENT.value,permissions.READ)
+            targetLatitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.TARGET.value,permissions.READ)
+            targetLongitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.TARGET.value,permissions.READ)
+            self.get_bearing(lat,targetLatitude,long,targetLongitude)
         except Exception as e:
             print(e)
             # print()

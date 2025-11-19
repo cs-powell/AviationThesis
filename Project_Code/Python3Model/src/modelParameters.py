@@ -48,13 +48,12 @@ class params:
                 ## If updating a current valu in aircraft state, 
                 # then update the previous now as well and recalculate the theta value and the delta from target
                 if(accessItem == listAccess.CURRENT.value and keys[0] == parameterType.AIRCRAFT_STATE):
-                    a = 1
                     ## Setting Previous to Just Changed Value 
-                    # result[listAccess.PREVIOUS.value] = previous
+                    result[listAccess.PREVIOUS.value] = previous
                     ## Setting Delta Theta as change in degrees from previous to current
-                    # result[listAccess.DELTA_THETA.value] = inputValue - previous
+                    result[listAccess.DELTA_THETA.value] = inputValue - previous
                     # Setting Theta Value (Target - Current)
-                    # result[listAccess.THETA.value] = result[listAccess.TARGET.value] - inputValue
+                    result[listAccess.THETA.value] = result[listAccess.TARGET.value] - inputValue
         else:
             if isinstance(result, list):
                 return result[accessItem]

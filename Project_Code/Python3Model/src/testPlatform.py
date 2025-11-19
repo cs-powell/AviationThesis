@@ -259,7 +259,7 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
                     elapsed = endTime - startTime
                     if(elapsed > currentDelay):
                         cogModel.update_aircraft_state() 
-                        # cogModel.update_controls_simultaneously()
+                        cogModel.update_controls_simultaneously()
                         # client.pauseSim(False)          #Unpause Simulator
                         startTime = time.time()
                     # sleep(2)                     # Let Simulator Run 50 Milliseconds
