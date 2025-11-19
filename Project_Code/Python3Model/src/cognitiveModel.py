@@ -189,12 +189,12 @@ class AircraftLandingModel(pyactr.ACTRModel):
             results = self.client.getDREFs(sources)
             # idx = 0
             keyValueResults = list(zip(keys,results))
-            print(keyValueResults)
+            # print(keyValueResults)
 
-            # for (key,value) in keyValueResults:
+            for (key,value) in keyValueResults:
             #     # self.globalVariables["destinations",key] = results[idx]
             #     print("Key: " + str(key))
-                # self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,key],listAccess.CURRENT.value,permissions.WRITE.value,value)
+                self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,key],listAccess.CURRENT.value,permissions.WRITE.value,value[0])
                 # idx+=1
             #Update Target Heading
             # lat  = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.CURRENT.value,permissions.READ)
