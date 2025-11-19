@@ -35,7 +35,7 @@ class params:
             }
         }
 
-    def dictionaryAccess(self,keys,accessItem:Enum,permissionFlag,inputValue=None):
+    def dictionaryAccess(self,keys,accessItem,permissionFlag,inputValue=None):
         nestedDictionary = self.globalParameters
         for key in keys:
             result = nestedDictionary[key]
@@ -43,16 +43,18 @@ class params:
         if(permissionFlag == permissions.WRITE.value):
             if isinstance(result, list):
                 previous = result[accessItem]
+                # print("LOOK:   " + str(result))
                 result[accessItem] = inputValue
                 ## If updating a current valu in aircraft state, 
                 # then update the previous now as well and recalculate the theta value and the delta from target
-                if(accessItem == listAccess.CURRENT and keys[0] == parameterType.AIRCRAFT_STATE):
+                if(accessItem == listAccess.CURRENT.value and keys[0] == parameterType.AIRCRAFT_STATE):
+                    a = 1
                     ## Setting Previous to Just Changed Value 
-                    result[listAccess.PREVIOUS] = previous
+                    # result[listAccess.PREVIOUS.value] = previous
                     ## Setting Delta Theta as change in degrees from previous to current
-                    result[listAccess.DELTA_THETA] = inputValue - previous
+                    # result[listAccess.DELTA_THETA.value] = inputValue - previous
                     # Setting Theta Value (Target - Current)
-                    result[listAccess.THETA] = result[listAccess.TARGET] - inputValue
+                    # result[listAccess.THETA.value] = result[listAccess.TARGET.value] - inputValue
         else:
             if isinstance(result, list):
                 return result[accessItem.value]
@@ -76,15 +78,15 @@ class params:
         return keyList
         
 class listAccess(Enum):
-    DREF = 0
-    TARGET = 1
-    PREVIOUS = 2
-    CURRENT = 3
-    THETA = 4
-    DELTA_THETA = 5
-    PHASE_FLAG = 0
-    INTEGRAL_VALUE = 0
-    TIMING = 0
+    DREF = 0,
+    TARGET = 1,
+    PREVIOUS = 2,
+    CURRENT = 3,
+    THETA = 4,
+    DELTA_THETA = 5,
+    PHASE_FLAG = 0,
+    INTEGRAL_VALUE = 0,
+    TIMING = 0,
     ##Aircraft Controls
     CONTROL_VALUE = 0
 
