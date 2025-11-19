@@ -313,9 +313,9 @@ class AircraftLandingModel(pyactr.ACTRModel):
         )
         delta_rudder   = self.proportionalIntegralControl(
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.DELTA_THETA.value,permissions.READ)/360,
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.DELTA_THETA.value,permissions.READ),
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE.value,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.THETA.value,permissions.READ)/360,
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"heading"],listAccess.THETA.value,permissions.READ),
             self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING.value,permissions.READ)
         )
         throttle = 0.5

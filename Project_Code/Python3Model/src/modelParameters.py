@@ -4,12 +4,12 @@ class params:
     def __init__(self):
         self.globalParameters = {
             parameterType.AIRCRAFT_STATE : {
-                "airspeed"          : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",0, 0,0,0,0],
+                "airspeed"          : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",80, 0,0,0,0],
                 "roll"              : ["sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",0,0,0,0,0],
-                "heading"           : ["sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",0,0,0,0,0], # Previous Heading
+                "heading"           : ["sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",179,0,0,0,0], # Previous Heading
                 "latitude"          : ["sim/flightmodel/position/latitude",39.895791,0,0,0,0],
                 "longitude"         : ["sim/flightmodel/position/longitude",-104.696032,0,0,0,0],
-                "vertical speed"    : ["sim/flightmodel/position/vh_ind_fpm",0,0,0,0,0], # Previous Descent Rate
+                "vertical speed"    : ["sim/flightmodel/position/vh_ind_fpm",-200,0,0,0,0], # Previous Descent Rate
                 "altitude"          : ["sim/flightmodel/position/y_agl",0,0,0,0,0],
                 "pitch"             : ["sim/flightmodel/position/true_theta",0,0,0,0,0],
                 "brakes"            : ["sim/cockpit2/controls/parking_brake_ratio",0,0,0,0,0],
@@ -101,9 +101,9 @@ class params:
             deltaThetaList.append(0)
             thetaList.append(0)
 
-        header_row = "{:<20} {:<20} {:<20} {:<20} {:>10}"
+        header_row = "{:<30} {:<30} {:<30} {:<30} {:>20}"
         headers = "Parameter Current Previous Delta_Theta Theta".split()
-        row = "{:<20} {:<20} {:<20} {:<20} {:>10}"
+        row = "{:<30} {:<30} {:<30} {:<30} {:>20}"
         print("\n" + header_row.format(*headers))
         print("-" * 101)
         for parameter, current,previous,deltaTheta,theta in zip(itemList, paramList,previousList,deltaThetaList,thetaList):
@@ -140,8 +140,8 @@ class flightPhase(Enum):
     ROLLOUT =   "rollout"
 
 class integralValues(Enum):
-    K = 0.1
-    Ki = 0.05
+    K = 0.01
+    Ki = 0.005
 
 class timeValues(Enum):
     DELTA_T = "deltaT"
