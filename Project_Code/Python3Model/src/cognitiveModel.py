@@ -21,8 +21,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.parameters = params()
         self.inProgress = True
         self.printControlsFlag = printFlag
-        # self.targetLat = 39.895791
-        # self.targetLong = -104.696032
+        
 
         """
         Setting DREF variables and loading into drefs array
