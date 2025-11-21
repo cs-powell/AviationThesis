@@ -140,8 +140,8 @@ class flightPhase(Enum):
     ROLLOUT =   "rollout"
 
 class integralValues(Enum):
-    K = 0.01
-    Ki = 0.005
+    K = 0.1
+    Ki = 0.05
 
 class timeValues(Enum):
     DELTA_T = "deltaT"

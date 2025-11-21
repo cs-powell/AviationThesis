@@ -283,32 +283,22 @@ class AircraftLandingModel(pyactr.ACTRModel):
         delta_control = k*delta_theta + k_i*theta*delta_t 
         return delta_control
         
-
-
     def update_controls_simultaneously(self):
         """
         Update all controls at the same time by calculating control values for each parameter.
         """
-        # [yoke_pull, yoke_steer, rudder, ignore0, ignore1, ignore2,ignore3] = self.client.getCTRL(0)
-        # self.parameters.dictionaryAccess(["aircraft_state","airspeed"],listAccess.CURRENT)
-        # try:
-        #     print(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA.value,permissions.READ.value))
-        # except Exception as e:
-        #     print(e)
-        #     sys.exit()
-
         delta_yoke_pull = self.proportionalIntegralControl(
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA.value,permissions.READ)/90,
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE.value,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.THETA.value,permissions.READ)/90,
             self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING.value,permissions.READ)
             )
         delta_yoke_steer = self.proportionalIntegralControl(
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.DELTA_THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.DELTA_THETA.value,permissions.READ)/90,
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.Ki],listAccess.INTEGRAL_VALUE.value,permissions.READ),
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.THETA.value,permissions.READ),
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"roll"],listAccess.THETA.value,permissions.READ)/90,
             self.parameters.dictionaryAccess([parameterType.TIMING,timeValues.DELTA_T],listAccess.TIMING.value,permissions.READ)
         )
         delta_rudder   = self.proportionalIntegralControl(
