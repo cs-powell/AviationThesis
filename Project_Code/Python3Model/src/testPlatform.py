@@ -247,13 +247,17 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
                 """
                 cogModel.client.pauseSim(False)
                 newExperiment = False
-               
                 """
                 Single Experiment Loop
                 """
                 startTime = time.time()
                 endTime =   time.time()
                 elapsed =   endTime - startTime
+
+                """Print Thread"""
+                def printThreadFunction(parameters):
+                    parameters.printParameter()
+                
                 while(experimentInProgress and (not stop_event.is_set())):
                     # print(stop_event.is_set())
                     elapsed = endTime - startTime
@@ -296,18 +300,6 @@ def runExperiment(title,currentConditions,allowPrinting,isNewExperiment,experime
     else:
         exitExperimentLoop = False
     return exitExperimentLoop
-
-
-# def say(msg = "Finish", voice = "Victoria"):
-#         os.system(f'say -v {voice} {"Hello"}')
-
-# def playSound():
-#     # wave_obj = sa.WaveObject.from_wave_file("Python3/src/experiments/terrain-terrain,-pull-up!-pull-up!-made-with-Voicemod.wav")
-#     # wave_obj.play()
-#     # # play_obj.wait_done()
-#     # song = AudioSegment.from_wav("Python3/src/experiments/terrain-terrain,-pull-up!-pull-up!-made-with-Voicemod.wav")
-#     # play(song)
-#     # playsound('Python3/src/experiments/terrain-terrain,-pull-up!-pull-up!-made-with-Voicemod.wav')
 
 def setUp(xplaneFolderPath):
     file = open(xplaneFolderPath + "Data.txt", 'w')
