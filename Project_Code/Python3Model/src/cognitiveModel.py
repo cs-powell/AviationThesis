@@ -55,7 +55,9 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
     def proportionalIntegralControl(self,k, delta_theta, k_i,theta,delta_t): # Edited to match Embry Riddle Equations
         delta_control = 0
-        if(theta > 5 or theta < -5):
+        THETA_DEADBAND = 0
+
+        if(theta > THETA_DEADBAND or theta < -THETA_DEADBAND): # Deadband of 0 degrees
             delta_control = k*delta_theta + k_i*theta*delta_t 
         return delta_control
     
@@ -63,7 +65,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Update all controls at the same time by calculating control values for each parameter.
         """
-        TESTSCALINGFACTOR = 25
+        TESTSCALINGFACTOR = 10
         delta_yoke_pull = self.proportionalIntegralControl(
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
             self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA.value,permissions.READ),
@@ -117,10 +119,14 @@ class AircraftLandingModel(pyactr.ACTRModel):
         if(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelWeight"],listAccess.CURRENT.value,permissions.READ.value) > 0.01
            and self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelSpeed"],listAccess.CURRENT.value,permissions.READ.value) > 1):
             self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.ROLLOUT.value],listAccess.PHASE_FLAG.value,permissions.WRITE.value, True)
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"brakes"],listAccess.TARGET.value,permissions.WRITE.value, 1)
 
-        if (self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"altitude"],listAccess.CURRENT.value,permissions.READ.value) <= 20 
+
+        if (self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"altitude"],listAccess.CURRENT.value,permissions.READ.value) <= 30 
             and self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.FLARE.value],listAccess.PHASE_FLAG.value,permissions.READ.value) == False): 
             self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.FLARE.value],listAccess.PHASE_FLAG.value,permissions.WRITE.value, True)
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.TARGET.value,permissions.WRITE.value, 20)
+
 
         if(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelWeight"],listAccess.CURRENT.value,permissions.READ.value) > 0.01 
            and self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelSpeed"],listAccess.CURRENT.value,permissions.READ.value) < 1 

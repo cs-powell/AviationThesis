@@ -11,11 +11,13 @@ class params:
                 "longitude"         : ["sim/flightmodel/position/longitude",-104.696032,0,0,0,0],
                 "vertical speed"    : ["sim/flightmodel/position/vh_ind_fpm",-200,0,0,0,0], # Previous Descent Rate
                 "altitude"          : ["sim/flightmodel/position/y_agl",0,0,0,0,0],
-                "pitch"             : ["sim/flightmodel/position/true_theta",10,0,0,0,0],
+                "pitch"             : ["sim/flightmodel/position/true_theta",5,0,0,0,0],
                 "brakes"            : ["sim/cockpit2/controls/parking_brake_ratio",0,0,0,0,0],
                 "wheelSpeed"        : ["sim/flightmodel2/gear/tire_rotation_speed_rad_sec",0,0,0,0,0],
                 "wheelWeight"       : ["sim/flightmodel/parts/tire_vrt_def_veh",0,0,0,0,0],
                 # "trim"              : ["sim/flightmodel/controls/elv_trim",0,0,0,0,0]
+                # Add Throttle Value 
+                # Add Flaps Value
             },
             parameterType.AIRCRAFT_CONTROLS : {
                 aircraftControls.YOKE_PULL : [0],
