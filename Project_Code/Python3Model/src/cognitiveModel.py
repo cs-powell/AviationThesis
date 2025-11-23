@@ -54,7 +54,9 @@ class AircraftLandingModel(pyactr.ACTRModel):
             print(e)
 
     def proportionalIntegralControl(self,k, delta_theta, k_i,theta,delta_t): # Edited to match Embry Riddle Equations
-        delta_control = k*delta_theta + k_i*theta*delta_t 
+        delta_control = 0
+        if(theta > 5 or theta < -5):
+            delta_control = k*delta_theta + k_i*theta*delta_t 
         return delta_control
     
     def update_controls_simultaneously(self):
@@ -96,7 +98,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         # end = time.time()
         # elapsed = end - start
         # print(f"Parameter Print Time: {elapsed} seconds")
-        self.send_controls_to_xplane(new_yoke_pull/90, new_yoke_steer/90,  new_rudder/90, throttle)
+        self.send_controls_to_xplane(new_yoke_pull/45, new_yoke_steer/45,  new_rudder/45, throttle)
 
 ## Pitch at Time, Pitch at Last Cycle, Target Pitch
 ## Target Pitch - Pitch at Last Cycle = Theta
