@@ -116,6 +116,12 @@ class AircraftLandingModel(pyactr.ACTRModel):
         self.client.sendCTRL([yoke_pull, yoke_steer, rudder, throttle, -998, -998])  # Control inputs: [yoke_pull, yoke_steer, rudder, throttle]
 
     def conditionChecks(self):
+
+        if (self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"altitude"],listAccess.CURRENT.value,permissions.READ.value) <= 500):
+            # self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"flaps"],listAccess.TARGET.value,permissions.WRITE.value, 0.5)
+            flaps = [0.5]
+            self.client.sendDREF("sim/flightmodel/controls/flaprqst", flaps)
+
         if(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelWeight"],listAccess.CURRENT.value,permissions.READ.value) > 0.01
            and self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelSpeed"],listAccess.CURRENT.value,permissions.READ.value) > 1):
             self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.ROLLOUT.value],listAccess.PHASE_FLAG.value,permissions.WRITE.value, True)

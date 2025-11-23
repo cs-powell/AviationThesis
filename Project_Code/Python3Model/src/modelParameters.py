@@ -18,6 +18,7 @@ class params:
                 # "trim"              : ["sim/flightmodel/controls/elv_trim",0,0,0,0,0]
                 # Add Throttle Value 
                 # Add Flaps Value
+                "flaps"             : ["sim/flightmodel/controls/flaprqst",0,0,0,0,0]
             },
             parameterType.AIRCRAFT_CONTROLS : {
                 aircraftControls.YOKE_PULL : [0],
