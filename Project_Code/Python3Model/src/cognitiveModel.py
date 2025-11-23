@@ -63,6 +63,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         """
         Update all controls at the same time by calculating control values for each parameter.
         """
+        TESTSCALINGFACTOR = 25
         delta_yoke_pull = self.proportionalIntegralControl(
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
             self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA.value,permissions.READ),
@@ -98,7 +99,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         # end = time.time()
         # elapsed = end - start
         # print(f"Parameter Print Time: {elapsed} seconds")
-        self.send_controls_to_xplane(new_yoke_pull/45, new_yoke_steer/45,  new_rudder/45, throttle)
+        self.send_controls_to_xplane(new_yoke_pull/TESTSCALINGFACTOR, new_yoke_steer/TESTSCALINGFACTOR,  new_rudder/TESTSCALINGFACTOR, throttle)
 
 ## Pitch at Time, Pitch at Last Cycle, Target Pitch
 ## Target Pitch - Pitch at Last Cycle = Theta
