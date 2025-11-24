@@ -119,7 +119,11 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
         if (self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"altitude"],listAccess.CURRENT.value,permissions.READ.value) <= 500):
             # self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"flaps"],listAccess.TARGET.value,permissions.WRITE.value, 0.5)
-            flaps = [0.5]
+            flaps = [0]
+            if (self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"altitude"],listAccess.CURRENT.value,permissions.READ.value) <= 250):
+                flaps = [0.75]
+            if (self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"altitude"],listAccess.CURRENT.value,permissions.READ.value) <= 100):
+                flaps = [1.0]
             self.client.sendDREF("sim/flightmodel/controls/flaprqst", flaps)
 
         if(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelWeight"],listAccess.CURRENT.value,permissions.READ.value) > 0.01
