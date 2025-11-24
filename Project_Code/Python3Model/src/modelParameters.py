@@ -4,7 +4,7 @@ class params:
     def __init__(self):
         self.globalParameters = {
             parameterType.AIRCRAFT_STATE : {
-                "airspeed"          : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",80, 0,0,0,0],
+                "airspeed"          : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",-80, 0,0,0,0],
                 "roll"              : ["sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",0,0,0,0,0],
                 "heading"           : ["sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",179,0,0,0,0], # Previous Heading
                 "latitude"          : ["sim/flightmodel/position/latitude",39.895791,0,0,0,0],
@@ -18,7 +18,8 @@ class params:
                 # "trim"              : ["sim/flightmodel/controls/elv_trim",0,0,0,0,0]
                 # Add Throttle Value 
                 # Add Flaps Value
-                "flaps"             : ["sim/flightmodel/controls/flaprqst",0,0,0,0,0]
+                "flaps"             : ["sim/flightmodel/controls/flaprqst",0,0,0,0,0],
+                "slip_skid"         : ["sim/cockpit2/gauges/indicators/slip_deg",0,0,0,0,0]
             },
             parameterType.AIRCRAFT_CONTROLS : {
                 aircraftControls.YOKE_PULL : [0],
