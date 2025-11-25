@@ -356,7 +356,7 @@ def specialPrint(text, inputRequested,type):
 
 
 
-def ex(stop_event: threading.Event, experiment_name : str):
+def ex(stop_event: threading.Event, experiment_name : str,experiment_number : int):
     # playSound()
     """
     One Time experimental setup
@@ -374,7 +374,12 @@ def ex(stop_event: threading.Event, experiment_name : str):
         prefix = experiment_name
     
     experimentConditionMatrix = loadFile()
-    startAt = input("Start At Experiment #1 to " + str(len(experimentConditionMatrix)-1))
+    startAt = 0
+    if(experiment_number == "" or experiment_number == None):
+        startAt = input("Start At Experiment #1 to " + str(len(experimentConditionMatrix)-1)) 
+    else:
+        startAt = experiment_name
+    # startAt = input("Start At Experiment #1 to " + str(len(experimentConditionMatrix)-1))
     title = str(prefix + "--" + experimentConditionMatrix[0][0])
     specialPrint("Title is: " + title, False, messageType.REGULAR)
     allowPrinting = False

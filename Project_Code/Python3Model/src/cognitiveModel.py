@@ -55,7 +55,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
     def proportionalIntegralControl(self,k, delta_theta, k_i,theta,delta_t): # Edited to match Embry Riddle Equations
         delta_control = 0
-        THETA_DEADBAND = 0
+        THETA_DEADBAND = 3
 
         if(theta > THETA_DEADBAND or theta < -THETA_DEADBAND): # Deadband of 0 degrees
             delta_control = k*delta_theta + k_i*theta*delta_t 
