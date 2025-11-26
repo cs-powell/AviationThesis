@@ -154,4 +154,3 @@ class timeValues(Enum):
 class permissions(Enum):
     READ = 0
     WRITE = 1
-
