@@ -39,7 +39,8 @@ class params:
                 timeValues.DELTA_T: 0.15
             },
             parameterType.VISION_QUEUE: { ## Basic Simulator of a scan order (FIFO) for vision module
-                visionModule.QUEUE.value: []
+                visionModule.QUEUE.value: [],
+                visionModule.POINTER_1.value: [0]
             }
         }
 
@@ -48,7 +49,7 @@ class params:
         for key in keys:
             result = nestedDictionary[key]
             nestedDictionary = result
-        vision = self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value][0:2]
+        vision = self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value][self.globalParameters[parameterType.VISION_QUEUE][visionModule.POINTER_1.value][0]:self.globalParameters[parameterType.VISION_QUEUE][visionModule.POINTER_1.value][0] + 4]
         if(permissionFlag == permissions.WRITE.value 
            and vision.__contains__(keys.pop())):
             if isinstance(result, list):
@@ -80,10 +81,14 @@ class params:
         # print("Vision Queue: " + str(self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value]))
 
     def visionCycle(self):
-        queue :list = self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value]
-        firstItem = queue.pop(0)
-        queue.append(firstItem)
-        self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value] = queue
+        if(self.globalParameters[parameterType.VISION_QUEUE][visionModule.POINTER_1.value][0] <= len(self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value]) - 5):
+            self.globalParameters[parameterType.VISION_QUEUE][visionModule.POINTER_1.value][0] += 1
+        else: 
+            self.globalParameters[parameterType.VISION_QUEUE][visionModule.POINTER_1.value][0] = 0
+        # queue :list = self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value]
+        # firstItem = queue.pop(0)
+        # queue.append(firstItem)
+        # self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value] = queue
     
     def getModelDREFS(self):
         dictionary :dict = self.globalParameters.get(parameterType.AIRCRAFT_STATE)
@@ -163,6 +168,8 @@ class parameterType(Enum):
 
 class visionModule(Enum):
     QUEUE = "queue"
+    POINTER_1 = "pointer_1"
+    POINTER_2 = "pointer_2"
 class aircraftControls(Enum):
     YOKE_PULL = "yoke_pull"
     YOKE_STEER = "yoke_steer"
