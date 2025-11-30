@@ -48,8 +48,9 @@ class params:
         for key in keys:
             result = nestedDictionary[key]
             nestedDictionary = result
+        vision = self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value][0:2]
         if(permissionFlag == permissions.WRITE.value 
-           and keys.__contains__("pitch")):
+           and vision.__contains__(keys.pop())):
             if isinstance(result, list):
                 previous = result[accessItem]
                 result[accessItem] = inputValue
@@ -78,6 +79,11 @@ class params:
         self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value] = queue
         # print("Vision Queue: " + str(self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value]))
 
+    def visionCycle(self):
+        queue :list = self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value]
+        firstItem = queue.pop(0)
+        queue.append(firstItem)
+        self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value] = queue
     
     def getModelDREFS(self):
         dictionary :dict = self.globalParameters.get(parameterType.AIRCRAFT_STATE)
@@ -167,8 +173,8 @@ class flightPhase(Enum):
     ROLLOUT =   "rollout"
 
 class integralValues(Enum):
-    K = 0.035
-    Ki = 0.015
+    K = 0.35
+    Ki = 0.15
 
 class timeValues(Enum):
     DELTA_T = "deltaT"

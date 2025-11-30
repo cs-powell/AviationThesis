@@ -51,6 +51,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
             targetLatitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"latitude"],listAccess.TARGET.value,permissions.READ)
             targetLongitude = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"longitude"],listAccess.TARGET.value,permissions.READ)
             self.get_bearing(lat,targetLatitude,long,targetLongitude)
+            self.parameters.visionCycle() ## Update the vision queue before the next state update
         except Exception as e:
             print(e)
 
