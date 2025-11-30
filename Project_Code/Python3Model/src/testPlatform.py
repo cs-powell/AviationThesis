@@ -318,7 +318,7 @@ def cleanUp(count,title,xplaneFolderPath):
     # specialPrint("Data File Ready",False,messageType.REGULAR)
 
 def specialPrint(text, inputRequested,type):
-    if(type == messageType.REGULAR): 
+    if(type == messageType.REGULAR):
         print("-" * 81)
         print('====> ', end='')
         print(text, end= " <====\n")
@@ -351,7 +351,6 @@ def specialPrint(text, inputRequested,type):
 #     t1.join()
 #     t2
 
-
 #     return userInput
 
 
@@ -361,7 +360,6 @@ def ex(stop_event: threading.Event, experiment_name : str,experiment_number : in
     """
     One Time experimental setup
     """
-
     if stop_event == None:
         stop_event = threading.Event()
         stop_event.clear()

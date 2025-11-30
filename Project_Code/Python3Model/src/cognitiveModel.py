@@ -55,17 +55,19 @@ class AircraftLandingModel(pyactr.ACTRModel):
 
     def proportionalIntegralControl(self,k, delta_theta, k_i,theta,delta_t): # Edited to match Embry Riddle Equations
         delta_control = 0
-        THETA_DEADBAND = 3
+        THETA_DEADBAND = 0
+        # delta_control = k*delta_theta + k_i*theta*delta_t 
 
         if(theta > THETA_DEADBAND or theta < -THETA_DEADBAND): # Deadband of 0 degrees
-            delta_control = k*delta_theta + k_i*theta*delta_t 
+            delta_control = k*delta_theta + k_i*theta*delta_t
+
         return delta_control
     
     def update_controls_simultaneously(self):
         """
         Update all controls at the same time by calculating control values for each parameter.
         """
-        TESTSCALINGFACTOR = 10
+        TESTSCALINGFACTOR = 5
         delta_yoke_pull = self.proportionalIntegralControl(
             self.parameters.dictionaryAccess([parameterType.INTEGRAL_VALUES,integralValues.K],listAccess.INTEGRAL_VALUE.value,permissions.READ),
             self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.DELTA_THETA.value,permissions.READ),
@@ -89,13 +91,17 @@ class AircraftLandingModel(pyactr.ACTRModel):
         )
 
         throttle = 0.25
-        new_yoke_pull   = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_yoke_pull
-        new_yoke_steer  = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_yoke_steer
-        new_rudder      = self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_rudder
+        def clamp(value):
+            return min(1,max(-1,value))
         
-        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE.value,permissions.WRITE.value,min(1,max(-1,new_yoke_pull)))
-        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE.value,permissions.WRITE.value,min(1,max(-1,new_yoke_steer)))
-        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE.value,permissions.WRITE.value,min(1,max(-1,new_rudder)))
+        new_yoke_pull   = clamp(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_yoke_pull)
+        new_yoke_steer  = clamp(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_yoke_steer)
+        new_rudder      = clamp(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE.value,permissions.READ) + delta_rudder)
+        
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_PULL],listAccess.CONTROL_VALUE.value,permissions.WRITE.value,new_yoke_pull)
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.YOKE_STEER],listAccess.CONTROL_VALUE.value,permissions.WRITE.value,new_yoke_steer)
+        self.parameters.dictionaryAccess([parameterType.AIRCRAFT_CONTROLS,aircraftControls.RUDDER],listAccess.CONTROL_VALUE.value,permissions.WRITE.value,new_rudder)
+
         # start = time.time()
         self.parameters.printParameter()
         # end = time.time()
@@ -107,7 +113,6 @@ class AircraftLandingModel(pyactr.ACTRModel):
 ## Target Pitch - Pitch at Last Cycle = Theta
 ## Target Pitch - Pitch at Time = CurrTheta
 ## Theta - CurrTheta = Delta Theta
-
 
     def send_controls_to_xplane(self, yoke_pull, yoke_steer, rudder, throttle):
         """
@@ -134,11 +139,14 @@ class AircraftLandingModel(pyactr.ACTRModel):
             self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.ROLLOUT.value],listAccess.PHASE_FLAG.value,permissions.WRITE.value, True)
             self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"brakes"],listAccess.TARGET.value,permissions.WRITE.value, 1)
 
-
         if (self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"altitude"],listAccess.CURRENT.value,permissions.READ.value) <= 30 
             and self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.FLARE.value],listAccess.PHASE_FLAG.value,permissions.READ.value) == False): 
             self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.FLARE.value],listAccess.PHASE_FLAG.value,permissions.WRITE.value, True)
-            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.TARGET.value,permissions.WRITE.value, 20)
+            self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"pitch"],listAccess.TARGET.value,permissions.WRITE.value, 35)
+        else: 
+            if(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"altitude"],listAccess.CURRENT.value,permissions.READ.value) >= 30):
+                self.parameters.dictionaryAccess([parameterType.PHASE_FLAGS,flightPhase.FLARE.value],listAccess.PHASE_FLAG.value,permissions.WRITE.value, False)
+
 
 
         if(self.parameters.dictionaryAccess([parameterType.AIRCRAFT_STATE,"wheelWeight"],listAccess.CURRENT.value,permissions.READ.value) > 0.01 

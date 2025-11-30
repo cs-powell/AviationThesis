@@ -4,7 +4,7 @@ class params:
     def __init__(self):
         self.globalParameters = {
             parameterType.AIRCRAFT_STATE : {
-                "airspeed"          : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",-80, 0,0,0,0],
+                "airspeed"          : ["sim/cockpit2/gauges/indicators/airspeed_kts_pilot",80, 0,0,0,0],
                 "roll"              : ["sim/cockpit2/gauges/indicators/roll_AHARS_deg_pilot",0,0,0,0,0],
                 "heading"           : ["sim/cockpit2/gauges/indicators/heading_AHARS_deg_mag_pilot",179,0,0,0,0], # Previous Heading
                 "latitude"          : ["sim/flightmodel/position/latitude",39.895791,0,0,0,0],
@@ -16,18 +16,17 @@ class params:
                 "wheelSpeed"        : ["sim/flightmodel2/gear/tire_rotation_speed_rad_sec",0,0,0,0,0],
                 "wheelWeight"       : ["sim/flightmodel/parts/tire_vrt_def_veh",0,0,0,0,0],
                 # "trim"              : ["sim/flightmodel/controls/elv_trim",0,0,0,0,0]
-                # Add Throttle Value 
+                # Add Throttle Value
                 # Add Flaps Value
-                
                 "flaps"             : ["sim/flightmodel/controls/flaprqst",0,0,0,0,0],
                 "slip_skid"         : ["sim/cockpit2/gauges/indicators/slip_deg",0,0,0,0,0]
             },
-            parameterType.AIRCRAFT_CONTROLS : {
+            parameterType.AIRCRAFT_CONTROLS: {
                 aircraftControls.YOKE_PULL : [0],
                 aircraftControls.YOKE_STEER : [0],
                 aircraftControls.RUDDER : [0]
             },
-            parameterType.PHASE_FLAGS : {
+            parameterType.PHASE_FLAGS: {
                 flightPhase.DESCENT.value         : [True],
                 flightPhase.FLARE.value           : [False],
                 flightPhase.ROLLOUT.value         : [False]
@@ -146,8 +145,8 @@ class flightPhase(Enum):
     ROLLOUT =   "rollout"
 
 class integralValues(Enum):
-    K = 1.4
-    Ki = 1.2
+    K = 0.035
+    Ki = 0.015
 
 class timeValues(Enum):
     DELTA_T = "deltaT"
