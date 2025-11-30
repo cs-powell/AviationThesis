@@ -37,18 +37,21 @@ class params:
             },
             parameterType.TIMING: {
                 timeValues.DELTA_T: 0.15
+            },
+            parameterType.VISION_QUEUE: { ## Basic Simulator of a scan order (FIFO) for vision module
+                visionModule.QUEUE.value: []
             }
         }
 
-    def dictionaryAccess(self,keys,accessItem,permissionFlag,inputValue=None):
+    def dictionaryAccess(self,keys : list,accessItem,permissionFlag,inputValue=None):
         nestedDictionary = self.globalParameters
         for key in keys:
             result = nestedDictionary[key]
             nestedDictionary = result
-        if(permissionFlag == permissions.WRITE.value):
+        if(permissionFlag == permissions.WRITE.value 
+           and keys.__contains__("pitch")):
             if isinstance(result, list):
                 previous = result[accessItem]
-                # print("LOOK:   " + str(previous))
                 result[accessItem] = inputValue
                 ## If updating a current valu in aircraft state, 
                 # then update the previous now as well and recalculate the theta value and the delta from target
@@ -64,7 +67,18 @@ class params:
                 return result[accessItem]
             else: 
                 return result
-            
+    ## VISION 
+    def populateVisionQueue(self):
+        dictionary :dict = self.globalParameters.get(parameterType.AIRCRAFT_STATE)
+        values = dictionary.keys()
+        queue = []
+        for item in values:
+            queue.append(item)
+        # print("Vision Queue Populated: " + str(queue))
+        self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value] = queue
+        # print("Vision Queue: " + str(self.globalParameters[parameterType.VISION_QUEUE][visionModule.QUEUE.value]))
+
+    
     def getModelDREFS(self):
         dictionary :dict = self.globalParameters.get(parameterType.AIRCRAFT_STATE)
         values = dictionary.values()
@@ -72,6 +86,8 @@ class params:
         for item in values:
             drefList.append(item[listAccess.DREF.value])
         return drefList
+    
+    
     
     def getModelKeys(self):
         dictionary :dict = self.globalParameters.get(parameterType.AIRCRAFT_STATE)
@@ -115,6 +131,9 @@ class params:
             print(row.format(parameter,current,previous,deltaTheta,theta))
         # print(self.globalParameters[parameterType.AIRCRAFT_STATE]["airspeed"][listAccess.CURRENT])
         
+
+    def initialize(self):
+        self.populateVisionQueue()
 class listAccess(Enum):
     DREF = 0
     TARGET = 1
@@ -134,7 +153,10 @@ class parameterType(Enum):
     PHASE_FLAGS = "phase_flags"
     INTEGRAL_VALUES = "integral_values"
     TIMING = "timing"
+    VISION_QUEUE = "vision_queue"
 
+class visionModule(Enum):
+    QUEUE = "queue"
 class aircraftControls(Enum):
     YOKE_PULL = "yoke_pull"
     YOKE_STEER = "yoke_steer"

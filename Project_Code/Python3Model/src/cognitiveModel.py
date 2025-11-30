@@ -20,6 +20,7 @@ class AircraftLandingModel(pyactr.ACTRModel):
         super().__init__()
         self.client = client
         self.parameters = params()
+        self.parameters.initialize()
         self.inProgress = True
         self.printControlsFlag = printFlag
 

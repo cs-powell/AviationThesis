@@ -11,14 +11,17 @@ class sandbox:
     # print(parameters.getModelDREFS())
     print(parameters.getModelKeys())
 
+
+
     p1 = params()
+    p1.populateVisionQueue()
 
     # print(p1.a)
-    p1.a = 21
+    # p1.a = 21
     # print(p1.a)
-    p2 = modelParameters.params()
+    # p2 = modelParameters.params()
     # print(p2.a)
-    p2.a = 3522 
+    # p2.a = 3522 
     # print(p2.a)
     # print(p1.b)
     # print(p2.b)
