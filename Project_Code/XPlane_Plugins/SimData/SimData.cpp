@@ -46,11 +46,11 @@ static std::ofstream myfile;
 
 
 float write(float inElapsedSinceLastCall, float inElapsedTimeSinceLastFlightLoop, int inCounter, void *inRefcon){
-		// float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
-		// // std::ofstream myfile;
-		// myfile << inElapsedSinceLastCall << "," << array[0] <<"," << array[1] <<"," << array[2] << "\n";
-		// myfile.flush();
-		XPLMDebugString("Nav1 frequency changed.\n");
+		float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
+		// std::ofstream myfile;
+		myfile << inElapsedSinceLastCall << "," << array[0] <<"," << array[1] <<"," << array[2] << "\n";
+		myfile.flush();
+		// XPLMDebugString("Nav1 frequency changed.\n");
 		return -1.0;
 	}
 
