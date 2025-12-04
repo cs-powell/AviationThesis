@@ -14,10 +14,13 @@
 // #include "XPLM/XPLMDataAccess.h"
 // #include "XPLM/XPLMMenus.h"
 #include <stdint.h>   // ADD THIS
+#include <iostream>  // ADD THIS
 // #include "XPLM/XPLMDataAccess.h"
 // #include "XPLM/XPLMUtilities.h"    // Contains XPLMAppendMenuItem
 // #include "XPLM/XPLMMenus.h"
 // #include "XPLM/XPLMPlugin.h"
+#include <iostream>
+#include <fstream>
 
 #include "SDK/CHeaders/XPLM/XPLMCamera.h"
 #include "SDK/CHeaders/XPLM/XPLMDataAccess.h"
@@ -31,9 +34,15 @@
 #include "SDK/CHeaders/XPLM/XPLMProcessing.h"
 #include "SDK/CHeaders/XPLM/XPLMScenery.h"
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
-
+#include "SDK/CHeaders/XPLM/XPLMUtilities.h"
+#include "SDK/CHeaders/XPLM/XPLMUtilities.h"
 /* We keep our data ref globally since only one is used for the whole plugin. */
 static XPLMDataRef gDataRef = NULL;
+static XPLMDataRef pitch = NULL;
+static XPLMDataRef roll = NULL;
+static XPLMDataRef heading = NULL;
+
+
 
 static void	MyMenuHandlerCallback(void *               inMenuRef,    void *               inItemRef);    
 PLUGIN_API int XPluginStart(
@@ -79,12 +88,23 @@ PLUGIN_API int XPluginStart(
         "Increment Nav1",
         (void*)(intptr_t)+1000,
         1);
+
+	XPLMAppendMenuItem(
+	myMenu,
+	"Send Datafile",
+	(void*)(intptr_t)+1000,
+	1);
+
+	
 	
 	/* Look up our data ref.  You find the string name of the data ref
 	 * in the master list of data refs, including in HTML form in the 
 	 * plugin SDK.  In this case, we want the nav1 frequency. */
 	gDataRef = XPLMFindDataRef("sim/cockpit/radios/nav1_freq_hz");
-	
+
+	pitch = XPLMFindDataRef("sim/flightmodel/position/theta"); // pitch
+	roll = XPLMFindDataRef("sim/flightmodel/position/phi");   // roll
+	heading = XPLMFindDataRef("sim/flightmodel/position/psi");   // heading
 	/* Only return that we initialized correctly if we found the data ref. */
 	return (gDataRef != NULL) ? 1 : 0;
 }
@@ -102,6 +122,8 @@ PLUGIN_API int XPluginEnable(void)
 	return 1;
 }
 
+
+
 PLUGIN_API void XPluginReceiveMessage(
 					XPLMPluginID	inFromWho,
 					int				inMessage,
@@ -114,5 +136,13 @@ void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
     if (gDataRef != NULL) {
         int delta = (int)(intptr_t)inItemRef;   // SAFE CONVERSION
         XPLMSetDatai(gDataRef, XPLMGetDatai(gDataRef) + delta);
+		// std::cout << "Nav1 frequency changed by " << delta << " Hz." << std::endl;
+		//  XPLMDebugString("Nav1 frequency changed.");
+		float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
+		std::ofstream myfile;
+  		myfile.open ("/Users/flyingtopher/Applications/X-Plane 11/Data.txt");
+  		myfile << "Writing this to a file.\n";
+		myfile << array[0] << "\n";
+  		myfile.close();
     }
 }
