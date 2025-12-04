@@ -32,7 +32,7 @@
 #include "SDK/CHeaders/XPLM/XPLMPlanes.h"
 #include "SDK/CHeaders/XPLM/XPLMPlugin.h"
 #include "SDK/CHeaders/XPLM/XPLMProcessing.h"
-#include "SDK/CHeaders/XPLM/XPLMScenery.h"
+// #include "SDK/CHeaders/XPLM/XPLMScenery.h"
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
@@ -44,6 +44,14 @@ static XPLMDataRef heading = NULL;
 static std::ofstream myfile;
 
 
+float write(float inElapsedSinceLastCall, float inElapsedTimeSinceLastFlightLoop, int inCounter, void *inRefcon){
+		// float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
+		// // std::ofstream myfile;
+		// myfile << inElapsedSinceLastCall << "," << array[0] <<"," << array[1] <<"," << array[2] << "\n";
+		// myfile.flush();
+		XPLMDebugString("Nav1 frequency changed.\n");
+		return -1.0;
+	}
 
 static void	MyMenuHandlerCallback(void *               inMenuRef,    void *               inItemRef);    
 PLUGIN_API int XPluginStart(
@@ -96,7 +104,8 @@ PLUGIN_API int XPluginStart(
 	(void*)(intptr_t)+1000,
 	1);
 
-	XPLMCreateFlightLoop_t d = {0, xplm_FlightLoop_Phase_BeforeFlightModel, NULL, NULL};
+	
+
 
 
 	
@@ -152,10 +161,16 @@ void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
         XPLMSetDatai(gDataRef, XPLMGetDatai(gDataRef) + delta);
 		// std::cout << "Nav1 frequency changed by " << delta << " Hz." << std::endl;
 		//  XPLMDebugString("Nav1 frequency changed.");
-		float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
-		// std::ofstream myfile;
-		myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
-		myfile.flush();
+		// float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
+		// // std::ofstream myfile;
+		// myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
+		// myfile.flush();
+		XPLMCreateFlightLoop_t params = {0};
+		params.structSize = sizeof(XPLMCreateFlightLoop_t);
+		params.phase = xplm_FlightLoop_Phase_BeforeFlightModel;
+		params.callbackFunc = write;
+		params.refcon = nullptr;
+		XPLMCreateFlightLoop(&params);
     }
-
+	
 }
