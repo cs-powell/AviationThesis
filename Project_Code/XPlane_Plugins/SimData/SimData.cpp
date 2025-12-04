@@ -173,6 +173,6 @@ void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
 		params.callbackFunc = write;
 		params.refcon = nullptr;
 		loopID = XPLMCreateFlightLoop(&params);
-		XPLMScheduleFlightLoop(loopID, -1, 1);
+		XPLMScheduleFlightLoop(loopID, 1, 1);
     }
 }
