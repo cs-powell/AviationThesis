@@ -41,6 +41,7 @@ static XPLMDataRef gDataRef = NULL;
 static XPLMDataRef pitch = NULL;
 static XPLMDataRef roll = NULL;
 static XPLMDataRef heading = NULL;
+static XPLMFlightLoopID loopID = NULL;
 static std::ofstream myfile;
 
 
@@ -165,12 +166,13 @@ void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
 		// // std::ofstream myfile;
 		// myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
 		// myfile.flush();
+		XPLMDebugString("Entered menu callback\n");
 		XPLMCreateFlightLoop_t params = {0};
 		params.structSize = sizeof(XPLMCreateFlightLoop_t);
 		params.phase = xplm_FlightLoop_Phase_BeforeFlightModel;
 		params.callbackFunc = write;
 		params.refcon = nullptr;
-		XPLMCreateFlightLoop(&params);
+		loopID = XPLMCreateFlightLoop(&params);
+		XPLMScheduleFlightLoop(loopID, -1, 1);
     }
-	
 }
