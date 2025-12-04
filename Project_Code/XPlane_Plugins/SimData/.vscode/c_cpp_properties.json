@@ -6,8 +6,8 @@
                 "${workspaceFolder}/**"
             ],
             "defines": [
-                "APL=1",
-                "XPLM=1"
+                "APL= 1",
+                "XPLM= 1"
             ],
             "compilerPath": "/usr/bin/clang",
             "cStandard": "c17",

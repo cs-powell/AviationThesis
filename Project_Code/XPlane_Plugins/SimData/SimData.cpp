@@ -116,6 +116,3 @@ void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
         XPLMSetDatai(gDataRef, XPLMGetDatai(gDataRef) + delta);
     }
 }
-
-
-
