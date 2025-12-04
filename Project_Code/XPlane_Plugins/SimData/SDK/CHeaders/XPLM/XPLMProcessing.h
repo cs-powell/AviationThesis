@@ -63,7 +63,6 @@ enum {
     /* Your callback runs after X-Plane integrates the flight model.              */
     xplm_FlightLoop_Phase_AfterFlightModel   = 1,
 
-
 };
 typedef int XPLMFlightLoopPhaseType;
 #endif /* XPLM210 */

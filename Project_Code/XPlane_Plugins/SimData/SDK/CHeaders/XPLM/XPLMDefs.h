@@ -1,5 +1,6 @@
 #ifndef _XPLMDefs_h_
 #define _XPLMDefs_h_
+#define XPLM210 1
 
 /*
  * Copyright 2005-2022 Laminar Research, Sandy Barbour and Ben Supnik All

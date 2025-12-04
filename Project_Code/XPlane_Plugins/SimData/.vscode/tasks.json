@@ -16,7 +16,7 @@
 
                 /* X-Plane platform macros */
                 "-DAPL=1",
-                "-DXPLM=1",
+                "-DXPLM=210",
 
                 /* Headers */
                 "-I${workspaceFolder}/SDK/CHeaders",

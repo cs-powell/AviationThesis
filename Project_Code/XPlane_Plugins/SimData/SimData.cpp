@@ -96,6 +96,9 @@ PLUGIN_API int XPluginStart(
 	(void*)(intptr_t)+1000,
 	1);
 
+	XPLMCreateFlightLoop_t d = {0, xplm_FlightLoop_Phase_BeforeFlightModel, NULL, NULL};
+
+
 	
 	
 	/* Look up our data ref.  You find the string name of the data ref
@@ -154,4 +157,5 @@ void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
 		myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
 		myfile.flush();
     }
+
 }
