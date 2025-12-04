@@ -41,6 +41,7 @@ static XPLMDataRef gDataRef = NULL;
 static XPLMDataRef pitch = NULL;
 static XPLMDataRef roll = NULL;
 static XPLMDataRef heading = NULL;
+static std::ofstream myfile;
 
 
 
@@ -105,12 +106,22 @@ PLUGIN_API int XPluginStart(
 	pitch = XPLMFindDataRef("sim/flightmodel/position/theta"); // pitch
 	roll = XPLMFindDataRef("sim/flightmodel/position/phi");   // roll
 	heading = XPLMFindDataRef("sim/flightmodel/position/psi");   // heading
+	myfile.open ("/Users/flyingtopher/Applications/X-Plane 11/Data.txt");
+	myfile << "Information About the Experiment Subject\n";
+	myfile << "Data About their Machine, version, aircraft, device, etc.\n";
+	myfile << "Experimental Data Begins Below:\n";
+	myfile << "<sep>\n";
+	myfile << "Pitch,Roll,Heading\n";
+	myfile.flush();
+
 	/* Only return that we initialized correctly if we found the data ref. */
 	return (gDataRef != NULL) ? 1 : 0;
 }
 
 PLUGIN_API void	XPluginStop(void)
 {
+	myfile.close();
+
 }
 
 PLUGIN_API void XPluginDisable(void)
@@ -139,10 +150,8 @@ void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
 		// std::cout << "Nav1 frequency changed by " << delta << " Hz." << std::endl;
 		//  XPLMDebugString("Nav1 frequency changed.");
 		float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
-		std::ofstream myfile;
-  		myfile.open ("/Users/flyingtopher/Applications/X-Plane 11/Data.txt");
-  		myfile << "Writing this to a file.\n";
-		myfile << array[0] << "\n";
-  		myfile.close();
+		// std::ofstream myfile;
+		myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
+		myfile.flush();
     }
 }
