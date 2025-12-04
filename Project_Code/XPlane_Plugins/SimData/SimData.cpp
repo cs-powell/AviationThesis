@@ -21,6 +21,8 @@
 // #include "XPLM/XPLMPlugin.h"
 #include <iostream>
 #include <fstream>
+#include <curl/curl.h>
+
 
 #include "SDK/CHeaders/XPLM/XPLMCamera.h"
 #include "SDK/CHeaders/XPLM/XPLMDataAccess.h"
@@ -36,13 +38,15 @@
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
+
 /* We keep our data ref globally since only one is used for the whole plugin. */
 static XPLMDataRef gDataRef = NULL;
 static XPLMDataRef pitch = NULL;
 static XPLMDataRef roll = NULL;
 static XPLMDataRef heading = NULL;
-static XPLMFlightLoopID loopID = NULL;
+// static XPLMFlightLoopID loopID = NULL;
 static std::ofstream myfile;
+static std::string presignedURL = "https://aviationthesisdatatest.s3.us-east-1.amazonaws.com/Data.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA47CRUI57V7N27UB6%2F20251204%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251204T200119Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=a887998178fba3c406b13f4e3312d33b5a8c4e690a68e853b5e278f90a3e37ab";
 
 
 float write(float inElapsedSinceLastCall, float inElapsedTimeSinceLastFlightLoop, int inCounter, void *inRefcon){
@@ -101,9 +105,18 @@ PLUGIN_API int XPluginStart(
 
 	XPLMAppendMenuItem(
 	myMenu,
-	"Send Datafile",
+	"Log to Datafile",
 	(void*)(intptr_t)+1000,
 	1);
+
+
+	XPLMAppendMenuItem(
+	myMenu,
+	"Upload Datafile",
+	(void*)(intptr_t)+1000,
+	2);
+
+	
 
 	
 
@@ -157,22 +170,58 @@ PLUGIN_API void XPluginReceiveMessage(
 
 void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
 {
-    if (gDataRef != NULL) {
-        int delta = (int)(intptr_t)inItemRef;   // SAFE CONVERSION
-        XPLMSetDatai(gDataRef, XPLMGetDatai(gDataRef) + delta);
-		// std::cout << "Nav1 frequency changed by " << delta << " Hz." << std::endl;
-		//  XPLMDebugString("Nav1 frequency changed.");
-		// float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
-		// // std::ofstream myfile;
-		// myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
-		// myfile.flush();
-		XPLMDebugString("Entered menu callback\n");
-		XPLMCreateFlightLoop_t params = {0};
-		params.structSize = sizeof(XPLMCreateFlightLoop_t);
-		params.phase = xplm_FlightLoop_Phase_BeforeFlightModel;
-		params.callbackFunc = write;
-		params.refcon = nullptr;
-		loopID = XPLMCreateFlightLoop(&params);
-		XPLMScheduleFlightLoop(loopID, 1, 1);
-    }
+    // if (gDataRef != NULL) {
+    //     int delta = (int)(intptr_t)inItemRef;   // SAFE CONVERSION
+    //     XPLMSetDatai(gDataRef, XPLMGetDatai(gDataRef) + delta);
+	// 	// std::cout << "Nav1 frequency changed by " << delta << " Hz." << std::endl;
+	// 	//  XPLMDebugString("Nav1 frequency changed.");
+	// 	// float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
+	// 	// // std::ofstream myfile;
+	// 	// myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
+	// 	// myfile.flush();
+	// 	XPLMDebugString("Entered menu callback\n");
+	// 	XPLMCreateFlightLoop_t params = {0};
+	// 	params.structSize = sizeof(XPLMCreateFlightLoop_t);
+	// 	params.phase = xplm_FlightLoop_Phase_BeforeFlightModel;
+	// 	params.callbackFunc = write;
+	// 	params.refcon = nullptr;
+	// 	loopID = XPLMCreateFlightLoop(&params);
+	// 	XPLMScheduleFlightLoop(loopID, 1, 1);
+    // }
+		
+		XPLMDebugString("Uploading to AWS\n");
+		const char* url = presignedURL.c_str();
+
+		CURL* curl = curl_easy_init();
+		if (!curl) {
+			XPLMDebugString("Failed to Upload to AWS\n");
+			// std::cerr << "Failed to initialize CURL\n";
+			return;
+		} else {
+			XPLMDebugString("CURL Initialized\n");
+		};
+
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+
+		FILE* file = fopen("/Users/flyingtopher/Applications/X-Plane 11/Data.txt", "rb");
+		if(file) {
+			XPLMDebugString("File opened successfully\n");
+		} else {
+			XPLMDebugString("Failed to open file\n");
+			return;
+		}
+		curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+		curl_easy_setopt(curl, CURLOPT_READDATA, file);
+
+		CURLcode res = curl_easy_perform(curl);
+
+		if (res != CURLE_OK){
+			XPLMDebugString("Upload Fail\n");
+			std::cerr << curl_easy_strerror(res) << "\n";
+		} else {
+			XPLMDebugString("Upload Success\n");
+			std::cout << "Upload OK\n";
+		}
+		curl_easy_cleanup(curl);
+		fclose(file);
 }

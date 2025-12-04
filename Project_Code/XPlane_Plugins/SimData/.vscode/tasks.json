@@ -25,6 +25,7 @@
                 "-F${workspaceFolder}/SDK/Libraries/Mac",
                 "-framework", "XPLM",
                 "-framework", "XPWidgets",
+                "-lcurl",
 
                 /* Plugin target type */
                 "-dynamiclib",
