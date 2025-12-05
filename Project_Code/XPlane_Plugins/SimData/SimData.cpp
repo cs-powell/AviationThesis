@@ -38,13 +38,14 @@
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
 #include "SDK/CHeaders/XPLM/XPLMUtilities.h"
+#include <map>
 
 /* We keep our data ref globally since only one is used for the whole plugin. */
 static XPLMDataRef gDataRef = NULL;
 static XPLMDataRef pitch = NULL;
 static XPLMDataRef roll = NULL;
 static XPLMDataRef heading = NULL;
-// static XPLMFlightLoopID loopID = NULL;
+static XPLMFlightLoopID loopID = NULL;
 static std::ofstream myfile;
 static std::string presignedURL = "https://aviationthesisdatatest.s3.us-east-1.amazonaws.com/Data.txt?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA47CRUI57V7N27UB6%2F20251204%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20251204T200119Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=a887998178fba3c406b13f4e3312d33b5a8c4e690a68e853b5e278f90a3e37ab";
 
@@ -147,7 +148,6 @@ PLUGIN_API int XPluginStart(
 PLUGIN_API void	XPluginStop(void)
 {
 	myfile.close();
-
 }
 
 PLUGIN_API void XPluginDisable(void)
@@ -168,60 +168,126 @@ PLUGIN_API void XPluginReceiveMessage(
 {
 }
 
+
+bool uploadToS3(
+    const std::string& presignedUrl,
+    const std::map<std::string, std::string>& fields,
+    const std::string& filePath)
+{
+    CURL* curl = curl_easy_init();
+    if (!curl) return false;
+
+    struct curl_httppost* form = nullptr;
+    struct curl_httppost* last = nullptr;
+
+    // Add all required S3 POST fields
+    for (const auto& kv : fields) {
+        curl_formadd(&form, &last,
+            CURLFORM_COPYNAME, kv.first.c_str(),
+            CURLFORM_COPYCONTENTS, kv.second.c_str(),
+            CURLFORM_END);
+    }
+
+    // Attach the file itself
+    curl_formadd(&form, &last,
+        CURLFORM_COPYNAME, "file",
+        CURLFORM_FILE, filePath.c_str(),
+        CURLFORM_END);
+
+    curl_easy_setopt(curl, CURLOPT_URL, presignedUrl.c_str());
+    curl_easy_setopt(curl, CURLOPT_HTTPPOST, form);
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, "XPlanePluginUploader/1.0");
+
+    // Optional: capture response
+    std::string response;
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION,
+        [](char* ptr, size_t size, size_t nmemb, void* userdata) -> size_t {
+            std::string* resp = (std::string*)userdata;
+            resp->append(ptr, size * nmemb);
+            return size * nmemb;
+        }
+    );
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &response);
+
+    CURLcode res = curl_easy_perform(curl);
+
+    curl_easy_cleanup(curl);
+    curl_formfree(form);
+
+    return (res == CURLE_OK);
+}
+
 void MyMenuHandlerCallback(void *inMenuRef, void *inItemRef)
 {
-    // if (gDataRef != NULL) {
-    //     int delta = (int)(intptr_t)inItemRef;   // SAFE CONVERSION
-    //     XPLMSetDatai(gDataRef, XPLMGetDatai(gDataRef) + delta);
-	// 	// std::cout << "Nav1 frequency changed by " << delta << " Hz." << std::endl;
-	// 	//  XPLMDebugString("Nav1 frequency changed.");
-	// 	// float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
-	// 	// // std::ofstream myfile;
-	// 	// myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
-	// 	// myfile.flush();
-	// 	XPLMDebugString("Entered menu callback\n");
-	// 	XPLMCreateFlightLoop_t params = {0};
-	// 	params.structSize = sizeof(XPLMCreateFlightLoop_t);
-	// 	params.phase = xplm_FlightLoop_Phase_BeforeFlightModel;
-	// 	params.callbackFunc = write;
-	// 	params.refcon = nullptr;
-	// 	loopID = XPLMCreateFlightLoop(&params);
-	// 	XPLMScheduleFlightLoop(loopID, 1, 1);
-    // }
-		
-		XPLMDebugString("Uploading to AWS\n");
-		const char* url = presignedURL.c_str();
+    if (gDataRef != NULL) {
+        int delta = (int)(intptr_t)inItemRef;   // SAFE CONVERSION
+        XPLMSetDatai(gDataRef, XPLMGetDatai(gDataRef) + delta);
+		// std::cout << "Nav1 frequency changed by " << delta << " Hz." << std::endl;
+		//  XPLMDebugString("Nav1 frequency changed.");
+		// float array[3] = {XPLMGetDataf(pitch), XPLMGetDataf(roll), XPLMGetDataf(heading)};
+		// // std::ofstream myfile;
+		// myfile << array[0] <<"," << array[1] <<"," << array[2] << "\n";
+		// myfile.flush();
+		XPLMDebugString("Entered menu callback\n");
+		XPLMCreateFlightLoop_t params = {0};
+		params.structSize = sizeof(XPLMCreateFlightLoop_t);
+		params.phase = xplm_FlightLoop_Phase_BeforeFlightModel;
+		params.callbackFunc = write;
+		params.refcon = nullptr;
+		loopID = XPLMCreateFlightLoop(&params);
+		XPLMScheduleFlightLoop(loopID, 1, 1);
+    }
 
-		CURL* curl = curl_easy_init();
-		if (!curl) {
-			XPLMDebugString("Failed to Upload to AWS\n");
-			// std::cerr << "Failed to initialize CURL\n";
-			return;
-		} else {
-			XPLMDebugString("CURL Initialized\n");
-		};
+	//AWS METHOD:
+// 	std::map<std::string, std::string> fields = {
+//     {"key", "logs/Data.txt"},
+//     {"policy", "base64policy"},
+//     {"x-amz-algorithm", "AWS4-HMAC-SHA256"},
+//     {"x-amz-credential", "...."},
+//     {"x-amz-date", "20250104T000000Z"},
+//     {"x-amz-signature", "...."}
+// };
 
-		curl_easy_setopt(curl, CURLOPT_URL, url);
+// bool ok = uploadToS3(
+//     "https://mybucket.s3.amazonaws.com/",
+//     fields,
+//     "/Users/flyingtopher/Applications/X-Plane 11/Data.txt"
+// );
 
-		FILE* file = fopen("/Users/flyingtopher/Applications/X-Plane 11/Data.txt", "rb");
-		if(file) {
-			XPLMDebugString("File opened successfully\n");
-		} else {
-			XPLMDebugString("Failed to open file\n");
-			return;
-		}
-		curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
-		curl_easy_setopt(curl, CURLOPT_READDATA, file);
+	//CURL METHOD: 	
+		// XPLMDebugString("Uploading to AWS\n");
+		// const char* url = presignedURL.c_str();
 
-		CURLcode res = curl_easy_perform(curl);
+		// CURL* curl = curl_easy_init();
+		// if (!curl) {
+		// 	XPLMDebugString("Failed to Upload to AWS\n");
+		// 	// std::cerr << "Failed to initialize CURL\n";
+		// 	return;
+		// } else {
+		// 	XPLMDebugString("CURL Initialized\n");
+		// };
 
-		if (res != CURLE_OK){
-			XPLMDebugString("Upload Fail\n");
-			std::cerr << curl_easy_strerror(res) << "\n";
-		} else {
-			XPLMDebugString("Upload Success\n");
-			std::cout << "Upload OK\n";
-		}
-		curl_easy_cleanup(curl);
-		fclose(file);
+		// curl_easy_setopt(curl, CURLOPT_URL, url);
+
+		// FILE* file = fopen("/Users/flyingtopher/Applications/X-Plane 11/Data.txt", "rb");
+		// if(file) {
+		// 	XPLMDebugString("File opened successfully\n");
+		// } else {
+		// 	XPLMDebugString("Failed to open file\n");
+		// 	return;
+		// }
+		// curl_easy_setopt(curl, CURLOPT_UPLOAD, 1L);
+		// curl_easy_setopt(curl, CURLOPT_READDATA, file);
+
+		// CURLcode res = curl_easy_perform(curl);
+
+		// if (res != CURLE_OK){
+		// 	XPLMDebugString("Upload Fail\n");
+		// 	std::cerr << curl_easy_strerror(res) << "\n";
+		// } else {
+		// 	XPLMDebugString("Upload Success\n");
+		// 	std::cout << "Upload OK\n";
+		// }
+		// curl_easy_cleanup(curl);
+		// fclose(file);
 }
