@@ -117,14 +117,6 @@ PLUGIN_API int XPluginStart(
 	(void*)(intptr_t)+1000,
 	2);
 
-	
-
-	
-
-
-
-	
-	
 	/* Look up our data ref.  You find the string name of the data ref
 	 * in the master list of data refs, including in HTML form in the 
 	 * plugin SDK.  In this case, we want the nav1 frequency. */
@@ -159,15 +151,12 @@ PLUGIN_API int XPluginEnable(void)
 	return 1;
 }
 
-
-
 PLUGIN_API void XPluginReceiveMessage(
 					XPLMPluginID	inFromWho,
 					int				inMessage,
 					void *			inParam)
 {
 }
-
 
 bool uploadToS3(
     const std::string& presignedUrl,
